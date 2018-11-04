@@ -20,7 +20,7 @@ int main()
     for(k=0; k<m; k++){
         for(j=0; j<n; j++){
             printf("%d ", random[k][j]);
-            fprintf(temp,"%d", random[k][j]);
+            fprintf(temp,"%d ", random[k][j]);
         }
         printf("\n");
         fprintf(temp,"\n");
