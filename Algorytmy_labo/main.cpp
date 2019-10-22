@@ -115,25 +115,23 @@ int main(int argc, char *argv[])
     fclose(fp);
 
     srand(uint(t.secsTo(QTime(23,59))));
-
-    Struktura** tab = allocAndInit(N);
-    qDebug()<<"Created "<<N<<" randomized structures.";
-
+    Struktura** tab = allocAndInit(N);   
     bubbleSort(tab,N);
-    qDebug()<<"Sorted strucures. Displaying top 20:";
+    int count = findNumeberOfObjectsWithChar(tab, X, N);
 
+    ///PRINTS
+    ///
+    qDebug()<<"Time elapsed: "<<t.elapsed()<<"ms";
+    qDebug()<<"Sorted strucures. Displaying top 20:";
     for(int i=0; i<20; i++)
     {
         printStructure(tab[i], i+1);
     }
 //    X= static_cast<char>(65);
-    int count = findNumeberOfObjectsWithChar(tab, X, N);
     qDebug()<<"Number of objects with char "<<X<<" is "<< count;
-
     freeStruktury(tab, N);
     qDebug()<<"Structures freed.";
-
-    qDebug()<<"Time elapsed: "<<t.elapsed()<<"ms";
+    qDebug()<<"Time elapsed after prints: "<<t.elapsed()<<"ms";
 
 
 
