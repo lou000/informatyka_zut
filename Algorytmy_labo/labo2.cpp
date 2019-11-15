@@ -228,7 +228,7 @@ bool labo2()
 
     qDebug()<<lista->findNode(k1);
     lista->addRandomNodes(X);
-    for(int i=0; i<LMAX-1;i++)
+    for(int i=0; i<=LMAX-1;i++)
         qDebug()<<"Poziom"<<i<<":"<<lista->countNodes(i);
     lista->printNodes(20,LMAX-1);
     lista->addNode(k2);
