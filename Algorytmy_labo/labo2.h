@@ -31,7 +31,6 @@ private:
     float P;
     int currentHeight;
     skipNode* head;
-    skipNode* tail;
     std::default_random_engine generator;
 };
 
