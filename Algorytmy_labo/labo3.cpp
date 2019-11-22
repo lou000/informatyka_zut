@@ -157,37 +157,42 @@ bool binTree::removeNode(int key)
             }
             else
             {
-                std::function<binTreeNode*(binTreeNode*)> findPredecesor = [&](binTreeNode* node1)->binTreeNode*
+
+                binTreeNode* prev = temp;
+                binTreeNode* temp1 = temp->leftChild;
+                while (temp1->rightChild != nullptr)
                 {
-                    binTreeNode* prev = node1;
-                    binTreeNode* temp1 = node1->leftChild;
-                    while(temp1->rightChild!=nullptr)
-                    {
-                        prev = temp1;
-                        temp1 = temp1->rightChild;
-                    }
-                    if (prev == node1)
-                        return node1->leftChild;
-                    else return prev;
-                };
-                auto predecesorPrevious = findPredecesor(temp);
-                auto predecesor = predecesorPrevious->rightChild;
-                if(predecesor->leftChild==nullptr)
+                    prev = temp1;
+                    temp1 = temp1->rightChild;
+                }
+                binTreeNode* predecesor = nullptr;
+                if(prev == temp)
                 {
+                    predecesor = prev->leftChild;
                     temp->key = predecesor->key;
                     strcpy(temp->tab, predecesor->tab);
-                    predecesorPrevious->rightChild = nullptr;
+                    prev->leftChild = predecesor->leftChild;
                     delete predecesor;
-                    return true;
                 }
                 else
                 {
-                    temp->key = predecesor->key;
-                    strcpy(temp->tab, predecesor->tab);
-                    predecesorPrevious->leftChild = predecesor->leftChild;
-                    predecesorPrevious->rightChild = nullptr;
-                    delete predecesor;
-                    return true;
+                    predecesor = prev->rightChild;
+                    if (predecesor->leftChild == nullptr)
+                    {
+                        temp->key = predecesor->key;
+                        strcpy(temp->tab, predecesor->tab);
+                        prev->rightChild = nullptr;
+                        delete predecesor;
+                        return true;
+                    }
+                    else
+                    {
+                        temp->key = predecesor->key;
+                        strcpy(temp->tab, predecesor->tab);
+                        prev->rightChild = predecesor->leftChild;
+                        delete predecesor;
+                        return true;
+                    }
                 }
             }
         }
