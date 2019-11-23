@@ -11,6 +11,7 @@ binTreeNode::binTreeNode(int key)
 binTree::binTree()
 {
     this->head = nullptr;
+    this->generator.seed(QTime::currentTime().msec());
 }
 
 //bool binTree::addNodeRecursive(int key, binTreeNode* node)
@@ -173,6 +174,7 @@ bool binTree::removeNode(int key)
                     strcpy(temp->tab, predecesor->tab);
                     prev->leftChild = predecesor->leftChild;
                     delete predecesor;
+                    return true;
                 }
                 else
                 {
@@ -225,7 +227,7 @@ void binTree::displayPreorder(binTreeNode* node1)
     };
 
     recursive(node1);
-    qDebug()<<"\nLiczba odwiedzonych wezlow:"<<counter;
+    qDebug()<<"\nLiczba odwiedzonych wezlow:"<<counter<<"\n";
 }
 
 
@@ -245,7 +247,7 @@ void binTree::displayPostorder(binTreeNode* node1)
     };
 
     recursive(node1);
-    qDebug()<<"\nLiczba odwiedzonych wezlow:"<<counter;
+    qDebug()<<"\nLiczba odwiedzonych wezlow:"<<counter<<"\n";
 }
 
 void binTree::displayInorder(binTreeNode* node1)
@@ -263,7 +265,7 @@ void binTree::displayInorder(binTreeNode* node1)
     };
 
     recursive(node1);
-    qDebug()<<"\nLiczba odwiedzonych wezlow:"<<counter;
+    qDebug()<<"\nLiczba odwiedzonych wezlow:"<<counter<<"\n";
 }
 
 bool labo3()

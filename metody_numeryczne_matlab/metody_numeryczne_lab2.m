@@ -1,7 +1,7 @@
 % x = input('Wprowadü x:');
 % y = input('Wprowadü y:');
 % P = input('Wprowadü stopien wielomianu:');
-P=3;
+P=4;
 userInputX=[4,14,22,25,31,43];
 userInputY=[13,41,22,1,122,21];
 N = length(userInputX);
