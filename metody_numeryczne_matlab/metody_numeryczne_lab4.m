@@ -57,7 +57,7 @@ calka3 = dx/3*(f(a)+4*sum(f(xp))+2*sum(f(xn))+f(b))
 
 figure()
 hold on
-E = 80000;
+E = 10000;
 underCount = 0;
 fplot(f);
 xlim([0,10])
@@ -67,9 +67,9 @@ for i = 1:E
     y = 7*rand();
     if(f(x)>y)
         underCount = underCount+1;
-        plot(x, y, 'or');
-    else
         plot(x, y, 'ob');
+    else
+        plot(x, y, 'or');
     end
 end
 calka4 = b*7*underCount/E
