@@ -16,6 +16,7 @@ fplot(fp3);
 fp5=@(x)((1./(12*h))*(f(x-2*h)-8*f(x-h)+8*f(x+h)-f(x+2*h)));
 fplot(fp5);
 legend('F', 'Wolfram', '2-punkt', '3-punkt', '5-punkt')
+hold off
 
 calka = 0;
 dx = (b-a)/n;
@@ -31,12 +32,55 @@ end
 calka2 = calka2+(f(a)+f(b))/2;
 calka2 = calka2*dx
 
-calka3 = 0;
-s = 0;
-for i=a:(b-dx)
-    x = a + i*dx;
-    s = s+f(x-dx./2);
-    calka = calka+f(x);
+% s = 0;
+% for i=a:(b-dx)
+%     x = a + i*dx;
+%     s = s+f(x-dx/2);
+%     calka3 = calka3+f(x);
+% end
+% s=s+f(b-dx/2);
+% calka3 = (dx/6) * (f(a) + f(b) + 2*calka3 + 4*s)
+
+% parzyste = 0;
+% nieparzyste = 0;
+% for i = a+dx:b-dx
+%     if mod(i,2)==0
+%         parzyste = parzyste + f(i);
+%     else
+%         nieparzyste = nieparzyste + f(i);
+%     end
+% end
+% calka3 = dx/3*(f(a)+4*parzyste+2*nieparzyste+f(b))
+xp = a+dx:2*dx:b-dx;
+xn = a+2*dx:2*dx:b-2*dx;
+calka3 = dx/3*(f(a)+4*sum(f(xp))+2*sum(f(xn))+f(b))
+
+figure()
+hold on
+E = 80000;
+underCount = 0;
+fplot(f);
+xlim([0,10])
+ylim([0,10])
+for i = 1:E
+    x = b*rand();
+    y = 7*rand();
+    if(f(x)>y)
+        underCount = underCount+1;
+        plot(x, y, 'or');
+    else
+        plot(x, y, 'ob');
+    end
 end
-    s=s+func(b-dx./2);
-    calka = (dx/6) * (f(a) + f(b) + 2*calka + 4*s)
+calka4 = b*7*underCount/E
+
+
+
+
+
+
+
+
+
+
+    
