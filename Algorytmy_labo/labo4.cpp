@@ -141,15 +141,13 @@ bool labo4()
     t.start();
     BalancedBST* tree = new BalancedBST();
     tree->addRandom(X1);
-    int numberOfNodes = tree->countNodes(tree->head);
     printf("Wysokosc drzewa : %d\n", tree->treeHeight(tree->head));
-    tree->balance_tree(numberOfNodes);
+    tree->balance_tree(tree->countNodes(tree->head));
     printf("Wysokosc po balansowaniu : %d\n", tree->treeHeight(tree->head));
     tree->clearTree(tree->head);
     tree->addRandom(X2);
-    numberOfNodes = tree->countNodes(tree->head);
     printf("Wysokosc drzewa : %d\n", tree->treeHeight(tree->head));
-    tree->balance_tree(numberOfNodes);
+    tree->balance_tree(tree->countNodes(tree->head));
     printf("Wysokosc po balansowaniu : %d\n", tree->treeHeight(tree->head));
     qDebug()<<"Time elapsed: "<<t.elapsed()<<"ms";
     return true;
