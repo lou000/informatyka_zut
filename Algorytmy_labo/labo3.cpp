@@ -14,38 +14,6 @@ binTree::binTree()
     this->generator.seed(QTime::currentTime().msec());
 }
 
-//bool binTree::addNodeRecursive(int key, binTreeNode* node)
-//{
-//    if(this->head == nullptr)
-//    {
-//        this->head = new binTreeNode(key);
-//        return true;
-//    }
-//    else if(node->key>key)
-//    {
-//        if(node->leftChild == nullptr)
-//            addNodeRecursive(key, node->leftChild);
-//        else
-//        {
-//            node->leftChild = new binTreeNode(key);
-//            return true;
-//        }
-//    }
-//    else if(node->key<key)
-//    {
-//        if(node->rightChild == nullptr)
-//            addNodeRecursive(key, node->rightChild);
-//        else
-//        {
-//            node->rightChild = new binTreeNode(key);
-//            return true;
-//        }
-//    }
-//    else if(node->key == key)
-//        return false;
-//    return false;
-//}
-
 bool binTree::addNode(int key)
 {
     if(this->head == nullptr)
@@ -82,19 +50,6 @@ void binTree::addRandom(int amount)
             i--;
     }
 }
-
-//binTreeNode* binTree::findNodeRecursive(int key, binTreeNode* node)
-//{
-//    if(node == nullptr)
-//        return nullptr;
-//    else if(node->key == key)
-//        return node;
-//    else if(node->key>key)
-//        findNodeRecursive(key, node->leftChild);
-//    else if(node->key<key)
-//        findNodeRecursive(key, node->rightChild);
-//    return nullptr;
-//}
 
 binTreeNode* binTree::findNode(int key)
 {
