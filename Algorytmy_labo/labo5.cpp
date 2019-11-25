@@ -161,7 +161,6 @@ bool labo5()
     hTable->displayElements(500, 600);
     qDebug()<<"Time elapsed: "<<t.elapsed()<<"ms";
     qDebug()<<"\n--------------------------------------------------------------------\n";
-    delete hTable;
 
     t.restart();
     HashTable* hTable2 = new HashTable(5000, DOUBLE_HASH);

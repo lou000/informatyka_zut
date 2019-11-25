@@ -1,5 +1,4 @@
-#ifndef LABO5_H
-#define LABO5_H
+#pragma once
 #include <stdio.h>
 #include <QDebug>
 #include <random>
@@ -35,4 +34,3 @@ private:
 
 bool labo5();
 
-#endif // LABO5_H

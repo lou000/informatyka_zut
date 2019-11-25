@@ -167,7 +167,7 @@ bool binTree::removeNode(int key)
     return false;
 }
 
-void binTree::displayPreorder(binTreeNode* node1)
+int binTree::displayPreorder(binTreeNode* node1)
 {
     qDebug()<<"Preorder";
     int counter = -1;
@@ -183,11 +183,12 @@ void binTree::displayPreorder(binTreeNode* node1)
 
     recursive(node1);
     qDebug()<<"\nLiczba odwiedzonych wezlow:"<<counter<<"\n";
+    return counter;
 }
 
 
 
-void binTree::displayPostorder(binTreeNode* node1)
+int binTree::displayPostorder(binTreeNode* node1)
 {
     int counter = -1;
     qDebug()<<"Postorder";
@@ -203,9 +204,10 @@ void binTree::displayPostorder(binTreeNode* node1)
 
     recursive(node1);
     qDebug()<<"\nLiczba odwiedzonych wezlow:"<<counter<<"\n";
+    return counter;
 }
 
-void binTree::displayInorder(binTreeNode* node1)
+int binTree::displayInorder(binTreeNode* node1)
 {
     qDebug()<<"Inorder";
     int counter = -1;
@@ -221,6 +223,7 @@ void binTree::displayInorder(binTreeNode* node1)
 
     recursive(node1);
     qDebug()<<"\nLiczba odwiedzonych wezlow:"<<counter<<"\n";
+    return counter;
 }
 
 bool labo3()

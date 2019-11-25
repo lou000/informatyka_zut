@@ -6,6 +6,7 @@
 
 class binTreeNode{
     friend class binTree;
+    friend class BalancedBST;
 public:
     int key;
     char tab[10];
@@ -25,9 +26,9 @@ public:
 //    binTreeNode* findNodeRecursive(int index, binTreeNode* head);
     binTreeNode* findNode(int index);
     bool removeNode(int index);
-    void displayPreorder(binTreeNode* head);
-    void displayPostorder(binTreeNode* head);
-    void displayInorder(binTreeNode* head);
+    int displayPreorder(binTreeNode* head);
+    int displayPostorder(binTreeNode* head);
+    int displayInorder(binTreeNode* head);
 private:
     std::default_random_engine generator;
 };
