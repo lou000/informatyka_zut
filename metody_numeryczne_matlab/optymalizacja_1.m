@@ -2,7 +2,7 @@ f = str2func('@(x) ((x.^3)+(x.^2)-(20.*x))');
 % fplot(f, [0, 6]);
 a=0;
 b=6;
-eps = 0.0001;
+eps = 0.01;
 
 %METODA PO£OWIENIA
 t_a = a;
@@ -68,6 +68,7 @@ while(abs(x0-prevX)>eps)
     prevX = x0;
     x0= prevX - fp(prevX)/fpp(prevX);
 end
+disp("Metoda Newtona");
 disp(x0);
 
 
