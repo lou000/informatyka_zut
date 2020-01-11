@@ -3,9 +3,10 @@
 #include "labo3.h"
 #include "labo4.h"
 #include "labo5.h"
+#include "labo6.h"
 
 int main()
 {
-    if(labo4())
+    if(labo6())
         qDebug()<<"Success";
 }
