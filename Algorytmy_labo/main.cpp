@@ -1,3 +1,4 @@
+#include "DArray.h"
 #include "labo1.cpp"
 #include "labo2.h"
 #include "labo3.h"
@@ -7,6 +8,13 @@
 
 int main()
 {
-    if(labo6())
-        qDebug()<<"Success";
+    DArray<int>* data = new DArray<int>();
+    data->append(10);
+    int lol1 = data->at(0);
+    data->operator[](2);
+    int lol = data[0];
+    auto asdasdas = 'a';
+//    if(labo6())
+//        qDebug()<<"Success";
+    return 0;
 }

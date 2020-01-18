@@ -18,7 +18,7 @@ bool labo6()
     std::uniform_int_distribution<int> distribution(20000,40000);
 
     auto lambda = [](const Example& x, const Example& y){return x.integer<y.integer;};
-    MaxHeap<Example, decltype(lambda)> heap(static_cast<uint64_t>(pow(10, MAX_ORDER)), lambda);
+    MaxHeap<Example, decltype(lambda)> heap(lambda);
     t.start();
     for(int i=0; i<= MAX_ORDER; i++)
     {

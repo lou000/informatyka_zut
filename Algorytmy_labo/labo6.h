@@ -2,28 +2,29 @@
 #include <functional>
 #include <QDebug>
 #include <stdexcept>
+#include "DArray.h"
 
 template <typename T = int, typename MHComp = std::less<T>>
 class MaxHeap
 {
 public:
-    MaxHeap(uint64_t max_size, MHComp comp):compare(comp), max_heapsize(max_size)
+    MaxHeap(MHComp comp):compare(comp)
     {
-        data = new T[max_size];
+        data = new DArray<T>;
+    }
+    ~MaxHeap()
+    {
+        delete data;
     }
 private:
     MHComp compare;
-    T* data;
-    uint64_t heapsize = 0;
-    uint64_t max_heapsize;
+    DArray<T>* data;
+    uint64_t heapsize = data->size();
 
 public:
     bool add_element(T item)
     {
-        if(heapsize>=max_heapsize)
-            return false;
-        data[heapsize] = item;
-        heapsize++;
+        data->append(item);
         heap_up(heapsize-1);
         return true;
     }
@@ -33,7 +34,7 @@ public:
             throw std::logic_error("Heap is empty");
         T temp = data[0];
         swap(heapsize-1, 0);
-        heapsize--;
+        data->remove(heapsize-1);
         heap_down(0);
         return temp;
     }
@@ -87,7 +88,7 @@ private:
 
     void heap_up(uint64_t index)
     {
-        int parent = (index - 1)/2;
+        uint64_t parent = (index - 1)/2;
         if(index && compare(data[parent],data[index]))
         {
             swap(index, parent);
