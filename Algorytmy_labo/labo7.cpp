@@ -6,44 +6,74 @@
 
 void countSort(int* array, int size)
 {
-    int MAX = 0;
-    for(int i=0; i<size; i++)
+    int MAX = array[0];
+    int MIN = array[0];
+
+    for(int i=1; i<size; i++)
+    {
+        if(array[i]<MIN)
+            MIN = array[i];
         if(array[i]>MAX)
             MAX = array[i];
-    int* temp = new int[size+1];
-    int* count = new int[MAX+1];
-    for(int i=0; i<=MAX; i++)
+    }
+    int countSize = MAX-MIN+1;
+    int* count = new int[countSize];
+    for(int i=0; i< countSize; i++)
         count[i] = 0;
+
     for(int i = 0; i<size; i++)
-        count[array[i]]+=1;
-    for(int i=1; i<=MAX; i++)
-        count[i]+=count[i-1];
-    for(int i=size-1; i>=0; i--)
+        count[array[i]-MIN]++;
+
+    int l=0;
+    for(int i=0; i<countSize; i++)
     {
-        temp[count[array[i]]] = array[i];
-        count[array[i]] -= 1;
+        int j =0;
+        for(j=l; j<count[i]+l; j++)
+        {
+            array[j]=i+MIN;
+        }
+        l=j;
     }
-    for(int i=0; i<size; i++)
-    {
-        array[i] = temp[i];
-    }
-    delete[] temp;
     delete[] count;
 }
+
 template <class T>
 void bucketSort(T* array, int size)
 {
-    int maxValue = array[0]; //start with first element
-    int minValue = array[0];
-
-
-    std::vector<T> bucket[size];
-    for(int i = 0; i<size; i++)
+    int bucketSize = 0;
+    int MIN = static_cast<int>(ceil(array[0]));
+    int MAX = static_cast<int>(ceil(array[0]));
+    for(int i=0; i<size; i++)
     {
-       bucket[int(size % array[i])].push_back(array[i]);
+        if(array[i]<MIN)
+            MIN = static_cast<int>(ceil(array[i]));
+        if(array[i]>MAX)
+            MAX = static_cast<int>(ceil(array[i]));
+    }
+
+    if((floor(array[0])-array[0])!=0)
+        bucketSize = MAX*size;
+    else
+        bucketSize = MAX-MIN+1;
+
+    std::vector<T> *bucket = new std::vector<T>[bucketSize];
+    auto lambda = [](const T& x, const T& y){return x>y;};
+
+    if((floor(array[0])-array[0])!=0)
+        for(int i = 0; i<size; i++)
+        {
+           uint64_t index = static_cast<uint64_t>(size*array[i]);
+           bucket[index].push_back(array[i]);
+        }
+    else
+    {
+        for(int i = 0; i<size; i++)
+        {
+           bucket[int(array[i]-MIN)].push_back(array[i]);
+        }
     }
     for(int i = 0; i<size; i++) {
-       sort(bucket[i].begin(), bucket[i].end());
+       sort(bucket[i].begin(), bucket[i].end(), lambda);
     }
     int index = 0;
     for(int i = 0; i<size; i++) {
@@ -62,17 +92,18 @@ bool labo7()
     std::default_random_engine generator;
     std::uniform_int_distribution<int> distribution(1,m-1);
 
-    for ( int o = 1; o <= MAX_ORDER ; o ++)
+    qDebug()<<"\nCZESC PIERWSZA - LICZBY CALKOWITE";
+    qDebug()<<"---------------------------------\n";
+    for ( int o = 1; o <= MAX_ORDER-2 ; o ++)
     {
-        qDebug()<<"CZESC PIERWSZA - LICZBY CALKOWITE";
         uint64_t n = static_cast<uint64_t>(pow (10 , o ));
         int* array1 = new int[n];
         for(int i=0; static_cast<uint64_t>(i)<n; i++)
             array1[i] = distribution(generator);
         qDebug()<<"Pierwsze 10 wylosowanych liczb to:";
-        for(uint64_t i=0; i<n && i<20; i++)
+        for(uint64_t i=0; i<n && i<10; i++)
             printf("%d ", array1[i]);
-        printf("\n");
+        printf("\n\n");
 
         int* array2 = new int[n];
         int* array3 = new int[n];
@@ -82,30 +113,63 @@ bool labo7()
 
         t.start();
         countSort(array1, static_cast<int>(n));
-        qDebug()<<"Sortowanie przez zliczanie ukończono w"<<t.elapsed()<<"ms";
-        for(uint64_t i=0; i<n && i<20; i++)
+        qDebug()<<"Sortowanie przez zliczanie ukonczono w"<<t.elapsed()<<"ms";
+        for(uint64_t i=0; i<n && i<10; i++)
             printf("%d ", array1[i]);
-        printf("\n");
+        printf("\n\n");
 
 
         auto lambda = [](const int& x, const int& y){return x>y;};
         MaxHeap<int, decltype(lambda)> heap(lambda, array2, n);
         t.restart();
         heap.sortMax(array2, n);
-        qDebug()<<"Sortowanie przez kopcowanie ukończono w"<<t.elapsed()<<"ms";
-        for(uint64_t i=0; i<n && i<20; i++)
+        qDebug()<<"Sortowanie przez kopcowanie ukonczono w"<<t.elapsed()<<"ms";
+        for(uint64_t i=0; i<n && i<10; i++)
             printf("%d ", array2[i]);
-        printf("\n");
+        printf("\n\n");
 
         t.restart();
         bucketSort<int>(array3, static_cast<int>(n));
-        qDebug()<<"Sortowanie kubełkowe ukonczono w"<<t.elapsed()<<"ms";
-        for(uint64_t i=0; i<n && i<20; i++)
+        qDebug()<<"Sortowanie kubelkowe ukonczono w"<<t.elapsed()<<"ms";
+        for(uint64_t i=0; i<n && i<10; i++)
             printf("%d ", array3[i]);
-        printf("\n");
+        printf("\n\n");
+    }
 
 
+    qDebug()<<"CZESC DRUGA - LICZBY DOUBLE";
+    qDebug()<<"---------------------------------\n";
+    const double help_me = static_cast<double>(pow(2, 20));
+    for ( int o = 1; o <= MAX_ORDER-2 ; o ++)
+    {
+        uint64_t n = static_cast<uint64_t>(pow (10 , o ));
+        double* array1 = new double[n];
+        for(int i=0; static_cast<uint64_t>(i)<n; i++)
+            array1[i] = distribution(generator)/help_me;
+        qDebug()<<"Pierwsze 10 wylosowanych liczb to:";
+        for(uint64_t i=0; i<n && i<10; i++)
+            printf("%f ", array1[i]);
+        printf("\n\n");
 
+        double* array2 = new double[n];
+        memcpy(array2, array1, n * sizeof(double));
+
+
+        auto lambda = [](const double& x, const double& y){return x<y;};
+        MaxHeap<double, decltype(lambda)> heap(lambda, array1, n);
+        t.restart();
+        heap.sortMax(array1, n);
+        qDebug()<<"Sortowanie przez kopcowanie ukonczono w"<<t.elapsed()<<"ms";
+        for(uint64_t i=0; i<n && i<10; i++)
+            printf("%f ", array1[i]);
+        printf("\n\n");
+
+        t.restart();
+        bucketSort<double>(array2, static_cast<int>(n));
+        qDebug()<<"Sortowanie kubelkowe ukonczono w"<<t.elapsed()<<"ms";
+        for(uint64_t i=0; i<n && i<10; i++)
+            printf("%f ", array2[i]);
+        printf("\n\n");
     }
     return true;
 

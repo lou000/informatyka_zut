@@ -14,7 +14,6 @@ public:
         data.addArray(array, size);
         for (int i = data.size()/2-1; i >= 0; i--)
            heap_down(i);
-        userData = array;
     }
     ~MaxHeap()
     {
@@ -22,7 +21,6 @@ public:
     }
 private:
     MHComp compare;
-    T* userData;
     DArray<T> data;
 
 public:
@@ -80,7 +78,7 @@ private:
         data[index2] = temp;
     }
 
-    void heap_down(uint64_t index) //top-down???
+    void heap_down(uint64_t index)
     {
         uint64_t largest = index;
         uint64_t left = 2 * index + 1;
