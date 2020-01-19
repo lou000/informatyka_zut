@@ -29,17 +29,13 @@ public:
         currentSize = a.currentSize;
         memcpy(data, a.data, a.maxSize*sizeof (item));
     }
-    item& operator[](unsigned int index);
-    item const& operator[](unsigned int index) const noexcept
-    {
-        if(index>currentSize-1)
-            throw std::out_of_range("Index out of range");
-        return data[index];
-    }
+    item& operator [] (unsigned int index);
+    item const& operator [] (unsigned int index) const;
+
     item& at(unsigned int index)
     {
         if(index>currentSize-1)
-            throw std::out_of_range("Index out of range");
+            throw std::out_of_range("Index out of range, DArray::at()");
         return data[index];
     }
     DArray& operator = (const DArray &a)
@@ -52,6 +48,19 @@ public:
         memcpy(data, a.data, a.byteSize());
         return *this;
     }
+    void addArray(item *array, unsigned int size)
+    {
+        while (maxSize-currentSize<size)
+        {
+            maxSize = maxSize*sizeMultiplier;
+            data = static_cast<item*>(realloc(data, byteSize()));
+            if(data == nullptr)
+                throw std::bad_alloc();
+        }
+        memcpy(&data[currentSize], array, size*sizeof (item));
+        currentSize = currentSize + size;
+    }
+
     void append(const item &i)
     {
         if(currentSize+1>maxSize)
@@ -73,7 +82,7 @@ public:
     void remove(unsigned int index)
     {
         if(index>currentSize-1)
-            throw std::out_of_range("Index out of range, max index is %d", currentSize-1);
+            throw std::out_of_range("Index out of range, DArray::remove()");
         for(unsigned int i=index; i<currentSize-1; i++)
             data[i] = data[i+1];
         memset(&data[currentSize], 0, sizeof(item));
@@ -97,16 +106,25 @@ private:
             if(data == nullptr)
                 throw std::bad_alloc();
         }
-
+        maxSize = s;
     }
     unsigned int byteSize(){return maxSize*sizeof(item);}
 
 };
 
 template <class item>
-item& DArray<item>::operator[](unsigned int index)
+item& DArray<item>::operator [](unsigned int index)
 {
     if(index>currentSize-1)
-        throw std::out_of_range("Index out of range");
+        throw std::out_of_range("Index out of range, DArray::operator[]");
     return data[index];
 }
+
+template <class item>
+item const& DArray<item>::operator [](unsigned int index) const
+{
+    if(index>currentSize-1)
+        throw std::out_of_range("Index out of range, DArray::operator[] const");
+    return data[index];
+}
+

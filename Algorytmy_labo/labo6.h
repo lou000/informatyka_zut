@@ -8,40 +8,44 @@ template <typename T = int, typename MHComp = std::less<T>>
 class MaxHeap
 {
 public:
-    MaxHeap(MHComp comp):compare(comp)
+    MaxHeap(MHComp comp):compare(comp){}
+    MaxHeap(MHComp comp, T* array, uint64_t size):compare(comp)
     {
-        data = new DArray<T>;
+        data.addArray(array, size);
+        for (int i = data.size()/2-1; i >= 0; i--)
+           heap_down(i);
+        userData = array;
     }
     ~MaxHeap()
     {
-        delete data;
+        data.clear();
     }
 private:
     MHComp compare;
-    DArray<T>* data;
-    uint64_t heapsize = data->size();
+    T* userData;
+    DArray<T> data;
 
 public:
     bool add_element(T item)
     {
-        data->append(item);
-        heap_up(heapsize-1);
+        data.append(item);
+        heap_up(data.size()-1);
         return true;
     }
     T pop()
     {
-        if(heapsize<1)
+        if(data.size()<1)
             throw std::logic_error("Heap is empty");
         T temp = data[0];
-        swap(heapsize-1, 0);
-        data->remove(heapsize-1);
+        swap(data.size()-1, 0);
+        data.remove(data.size()-1);
         heap_down(0);
         return temp;
     }
 
     T get(uint64_t index)
     {
-        if(index>=0 && index<heapsize)
+        if(index>=0 && index<data.size())
         {
             return data[index];
         }
@@ -50,13 +54,21 @@ public:
 
     void clear()
     {
-        heapsize = 0;
+        data.clear();
     }
     void print()
     {
-        for(uint64_t i = 0; i<heapsize; i++)
+        for(uint64_t i = 0; i<data.size(); i++)
         {
             qDebug()<<"Element at index"<<i<<"="<<&data[i];
+        }
+    }
+    void sortMax(T* array, uint64_t size)
+    {
+        if(size == data.size())
+        {
+            for(uint64_t i = 0; i<size; i++)
+                array[i] = pop();
         }
     }
 
@@ -68,21 +80,22 @@ private:
         data[index2] = temp;
     }
 
-    void heap_down(uint64_t index)
+    void heap_down(uint64_t index) //top-down???
     {
+        uint64_t largest = index;
         uint64_t left = 2 * index + 1;
         uint64_t right = 2 * index + 2;
 
-        if (left < heapsize && compare(data[left], data[index]) && compare(data[left], data[right]))
-        {
-            swap(index, left);
-            heap_down(left);
-        }
+        if (left < data.size() && compare(data[left], data[largest]))
+            largest = left;
 
-        else if (right < heapsize && compare(data[right], data[index]))
+        if (right < data.size() && compare(data[right], data[largest]))
+            largest = right;
+
+        if (largest != index)
         {
-            swap(index, right);
-            heap_down(right);
+            swap(index, largest);
+            heap_down(largest);
         }
     }
 

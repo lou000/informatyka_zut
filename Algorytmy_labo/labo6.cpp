@@ -32,16 +32,18 @@ bool labo6()
         }
         qDebug()<<"Dodano"<<n<<"elementow"<<"w czasie"<<t.elapsed()<<"ms";
 //      WYPISYWANIE DO KONSOLI TEJ LICZBY ELEMENTOW JEST ZBYT WOLNE
-//        uint64_t index = 0;
-//        for(int i=1; i<log2(n+1); i++)
-//        {
-//            for(int j=0; j<pow(2, (i-1))-1;j++)
-//            {
-//                printf("%d ", heap.get(index).integer);
-//                index++;
-//            }
-//            printf("\n");
-//        }
+        int it=0;
+        int index = 0;
+        while(index<n)
+        {
+            for(int i = 0;i < pow(2, it) && index<n; i++)
+            {
+                printf("%d ", heap.get(index).integer);
+                index++;
+            }
+            printf("\n");
+            it++;
+        }
         t.restart();
         for(int j=0; j<n; j++)
         {
