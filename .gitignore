@@ -8,3 +8,15 @@ Algorytmy_labo/Algorytmy_labo.pro
 Algorytmy_labo/AdvancedPrintForSkipList.cpp
 *.autosave
 **/build*/**
+Laboratoria_Java/.idea/workspace.xml
+Laboratoria_Java/.idea/vcs.xml
+Laboratoria_Java/.idea/project-template.xml
+Laboratoria_Java/.idea/modules.xml
+Laboratoria_Java/.idea/misc.xml
+Laboratoria_Java/.idea/encodings.xml
+Laboratoria_Java/.idea/description.html
+Laboratoria_Java/.idea/codeStyles/codeStyleConfig.xml
+Laboratoria_Java/out/production/Laboratoria_Java/com/company/Main.class
+Laboratoria_Java/out/production/Laboratoria_Java/lab_5/Controller.class
+Laboratoria_Java/out/production/Laboratoria_Java/lab_5/Model.class
+Laboratoria_Java/out/production/Laboratoria_Java/lab_5/View.class
