@@ -38,14 +38,19 @@ public class lab7_Controller
                 {
                     int position = 1;
                     Iterator valueIterator=model.data.values().iterator();
-                    while(position!=0)
+                    if(model.data.size()>0)
                     {
-                        menu.clear_console();
-                        menu.print_worker_list((Pracownik) valueIterator.next(), position, model.data.size());
-                        int input = get_int_input();
-                        if(input==1)
-                            position++;
-                        else position = 0;
+                        while (position != 0)
+                        {
+                            menu.clear_console();
+                            menu.print_worker_list((Pracownik) valueIterator.next(), position, model.data.size());
+                            int input = get_int_input();
+                            if (input == 1)
+                                position++;
+                            else position = 0;
+                            if(position>model.data.size())
+                                position = 0;
+                        }
                     }
                     break;
                 }
