@@ -1,7 +1,8 @@
 package lab_5;
 import java.util.Scanner;
 
-public class Controller {
+public class lab5_Controller
+{
     public int[][] getMatrix(int row, int column)
     {
         Scanner in  = new Scanner(System.in);
@@ -19,8 +20,8 @@ public class Controller {
 
     public void lab_5()
     {
-        View menu = new View();
-        Model matrices = new Model();
+        lab5_View menu = new lab5_View();
+        lab5_Model matrices = new lab5_Model();
         int input = 1;
         while(input!=0)
         {

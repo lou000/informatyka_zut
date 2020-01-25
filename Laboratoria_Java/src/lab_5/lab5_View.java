@@ -1,6 +1,7 @@
 package lab_5;
 
-public class View {
+public class lab5_View
+{
     void println(Object line) {
         System.out.println(line);
     }

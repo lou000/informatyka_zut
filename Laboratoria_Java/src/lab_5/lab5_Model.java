@@ -1,6 +1,7 @@
 package lab_5;
 
-public class Model {
+public class lab5_Model
+{
 
     ////////MULTIPLICATION
     public int[][] multiply_matrices(int[][] A, int[][] B)
