@@ -1,0 +1,42 @@
+package lab_5;
+
+class lab5_View
+{
+    void println(Object line) {
+        System.out.println(line);
+    }
+    void clear_console()
+    {
+        for(int i=0; i<20; i++)
+            println("\n");
+    }
+    void print_main_menu()
+    {
+        println("JAVA LAB 5\n");
+        println("1. Wprowadź macierze wejściowe.");
+        println("2. Operacje arytmetyczne.");
+        println("3. Wyświetl macierze.");
+        println("0. Wyjdź.\n\n");
+    }
+    void print_submenu_1()
+    {
+        println("1. Transponuj macierze wejściowe.");
+        println("2. Pomnóż macierze wejściowe.");
+        println("3. Transponuj macierz wynikową.");
+        println("0. Powrót.\n\n");
+    }
+    void print_submenu_2()
+    {
+        println("1. Wyświetl macierze wejściowe.");
+        println("2. Wyświetl macierz wynikową.");
+        println("0. Powrót.\n\n");
+    }
+    void print_matrix(int[][] A)
+    {
+        for (int[] ints : A) {
+            for (int column = 0; column < A[0].length; column++)
+                System.out.printf("%d ", ints[column]);
+            System.out.print("\n");
+        }
+    }
+}
