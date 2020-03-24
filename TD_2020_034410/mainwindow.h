@@ -1,10 +1,5 @@
 ﻿#pragma once
 #include <QMainWindow>
-#include <QChartView>
-#include <QChart>
-#include <QTabBar>
-
-using namespace QtCharts;
 
 class MainWindow : public QMainWindow
 {
