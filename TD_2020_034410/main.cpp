@@ -2,8 +2,8 @@
 #include <QApplication>
 #include <QFile>
 #include <QTextStream>
-#include "framelesswindow/framelesswindow.h"
-#include "DarkStyle.h"
+#include "external/framelesswindow/framelesswindow.h"
+#include "external/DarkStyle.h"
 
 int main(int argc, char *argv[])
 {
