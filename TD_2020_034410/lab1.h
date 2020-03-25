@@ -17,6 +17,7 @@
 #include <QtMath>
 #include <QDoubleSpinBox>
 #include <QSpinBox>
+#include <QPlainTextEdit>
 
 //TODO add zooming, change default theme
 
@@ -37,7 +38,7 @@ private:
     double zFunction(double x, QVector<int> indexData);
     double uFunction(double x, QVector<int> indexData);
 
-    //there is a lot of repetition here but i couldnt be bothered
+    //there is a lot of repetition here but i couldnt be bothered to refactor
     QLineSeries* seriesX;
     QLineSeries* seriesY;
     QLineSeries* seriesZ;
@@ -66,6 +67,7 @@ private:
 
     QLineEdit* numberSet;
 
+    QPlainTextEdit* additionalOutput;
     QChartView* chartView;
     QValueAxis* axisX;
     QValueAxis* axisY;

@@ -2,6 +2,7 @@
 
 Lab1::Lab1(QWidget *parent) : QWidget(parent)
 {
+    //there is a lot of repetition here but i couldnt be bothered to refactor
     seriesX = new QLineSeries();
     seriesX->setName("X(t)");
     seriesX->setColor(QColor("blue"));
@@ -31,7 +32,7 @@ Lab1::Lab1(QWidget *parent) : QWidget(parent)
     mainLayout->addLayout(leftBarLayout);
     leftBarLayout->setAlignment(Qt::AlignTop);
 
-    leftBarLayout->setVerticalSpacing(20);
+    leftBarLayout->setVerticalSpacing(10);
 
 
     /////////////COMBO BOX FOR SELECTING CHARTS////////////////////
@@ -155,6 +156,16 @@ Lab1::Lab1(QWidget *parent) : QWidget(parent)
     this->numberSet->setMaximumWidth(80);
     leftBarLayout->addWidget(new QLabel("Set of numbers for P(t):", this), 4, 1, Qt::AlignLeft);
     leftBarLayout->addWidget(numberSet, 4, 2, Qt::AlignLeft);
+
+    /////////////////ADITIONAL OUTPUT/////////////////////////////////
+    auto addOutput = new QGroupBox("Additional output", this);
+    auto addOutputLayout = new QGridLayout();
+    addOutput->setMaximumSize(200,100);
+    this->additionalOutput = new QPlainTextEdit("", this);
+    this->additionalOutput->setReadOnly(true);
+    addOutputLayout->addWidget(additionalOutput, 0, 0, Qt::AlignLeft);
+    addOutput->setLayout(addOutputLayout);
+    leftBarLayout->addWidget(addOutput, 5, 0, 1, 4, Qt::AlignHCenter);
 
 
     auto chart = new QChart();
@@ -398,6 +409,7 @@ double Lab1::uFunction(double x, QVector<int> indexData)
 
 void Lab1::calculateX()
 {
+    QVector<int> indexData = parsedIndex();
     double rangeF = -10;
     double rangeT = 10;
     if(rangeF>rangeT)
@@ -413,9 +425,29 @@ void Lab1::calculateX()
 
     seriesX->clear();
     for(double x = rangeF; x<=rangeT; x+=step)
-        seriesX->append(x, xFunction(x, parsedIndex()));
+        seriesX->append(x, xFunction(x, indexData));
     if(contains)
         handleXselected(2);
+    double det = indexData[1]*indexData[1]-4*indexData[0]*indexData[2];
+    if(det>0)
+    {
+        additionalOutput->setPlainText("Miejsca zerowe X(t)\n"+
+                    QString::number((-indexData[1]+sqrt(det))/(2*indexData[0]))
+                    +"\n"+ QString::number((-indexData[1]-sqrt(det))/(2*indexData[0])));
+    }
+    else if(det==0)
+    {
+        additionalOutput->setPlainText("Miejsce zerowe X(t)\n"+
+                    QString::number(((-indexData[1])/(2*indexData[0]))));
+    }
+    else if(det<0)
+    {
+        additionalOutput->setPlainText("Miejsca zerowe X(t)\n"+
+                                       QString::number(((-indexData[1])/(2*indexData[0])))+"+"+
+                                       QString::number(sqrt(-det)/(2*indexData[0]))+"i"+"\n"+
+                                       QString::number(((-indexData[1])/(2*indexData[0])))+"-"+
+                                       QString::number(sqrt(-det)/(2*indexData[0]))+"i");
+    }
 }
 
 void Lab1::calculateY()
