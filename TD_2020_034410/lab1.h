@@ -28,9 +28,17 @@ class Lab1 : public QWidget
     Q_OBJECT
 public:
     explicit Lab1(QWidget *parent = nullptr);
-
-
 private:
+
+    enum Series{
+        seriesX,
+        seriesY,
+        seriesZ,
+        seriesU,
+        seriesV,
+        seriesP
+    };
+
     QVector<int> parsedIndex();
     QVector<int> parsedNumberSet();
     double xFunction(double x, QVector<int> indexData);
@@ -38,13 +46,7 @@ private:
     double zFunction(double x, QVector<int> indexData);
     double uFunction(double x, QVector<int> indexData);
 
-    //there is a lot of repetition here but i couldnt be bothered to refactor
-    QLineSeries* seriesX;
-    QLineSeries* seriesY;
-    QLineSeries* seriesZ;
-    QLineSeries* seriesU;
-    QLineSeries* seriesV;
-    QLineSeries* seriesP;
+    QVector<QLineSeries*> seriesVec;
 
     QCheckBox* chartX;
     QCheckBox* chartY;
@@ -69,29 +71,8 @@ private:
 
     QPlainTextEdit* additionalOutput;
     QChartView* chartView;
-    QValueAxis* axisX;
-    QValueAxis* axisY;
-
-signals:
-    void xChanged();
-    void yChanged();
-    void zChanged();
-    void uChanged();
-    void vChanged();
-    void pChanged();
 
 private slots:
-    void handleXselected(int selected);
-    void handleYselected(int selected);
-    void handleZselected(int selected);
-    void handleUselected(int selected);
-    void handleVselected(int selected);
-    void handlePselected(int selected);
-
-    void calculateX();
-    void calculateY();
-    void calculateZ();
-    void calculateU();
-    void calculateV();
-    void calculateP();
+    void handleSeriesSelectionChanged(int selection, Series type);
+    void calculateSeries(Series type);
 };

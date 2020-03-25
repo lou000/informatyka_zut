@@ -5,7 +5,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     this->setWindowTitle("Transmisja danych - Laboratoria - by Lewicki Maciej");
-    this->setFixedSize(QSize(1000, 600));
+    this->setFixedSize(QSize(1400, 800));
     this->setContentsMargins(10, 10, 10, 10);
 //    this->setBaseSize(1000, 600);
     centralWidget = new QTabWidget(this);
