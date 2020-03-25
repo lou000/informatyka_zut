@@ -57,10 +57,11 @@ Lab1::Lab1(QWidget *parent) : QWidget(parent)
     auto index = new QWidget(this);
     index->setMinimumWidth(200);
     auto indexLayout = new QGridLayout();
-    this->userIndex = new QLineEdit("98099", this);
+    this->userIndex = new QSpinBox(this);
     this->userIndex->setAlignment(Qt::AlignRight);
-    this->userIndex->setValidator(new QRegExpValidator(QRegExp("[0-9]{5,6}"), this));
-    this->userIndex->setMaximumWidth(60);
+    this->userIndex->setMaximum(999999);
+    this->userIndex->setValue(98099);
+    this->userIndex->setMaximumWidth(80);
     indexLayout->addWidget(new QLabel("Index:", this), 0, 0, Qt::AlignRight);
     indexLayout->addWidget(userIndex, 0, 1, Qt::AlignLeft);
     index->setLayout(indexLayout);
@@ -71,24 +72,30 @@ Lab1::Lab1(QWidget *parent) : QWidget(parent)
     auto rangeLayout = new QGridLayout();
     range->setMinimumWidth(200);
 
-    this->rangeFrom = new QLineEdit("0.00", this);
+    this->rangeFrom = new QDoubleSpinBox(this);
     this->rangeFrom->setAlignment(Qt::AlignRight);
     this->rangeFrom->setMaximumWidth(50);
-    this->rangeFrom->setValidator(new QDoubleValidator(-999, 999, 3, this));
+    this->rangeFrom->setMaximum(999);
+    this->rangeFrom->setMinimum(-999);
+    this->rangeFrom->setValue(0.0);
     rangeLayout->addWidget(new QLabel("From:", this), 0, 0, Qt::AlignRight);
     rangeLayout->addWidget(rangeFrom, 0, 1, Qt::AlignLeft);
 
-    this->rangeTo = new QLineEdit("1.00",this);
+    this->rangeTo = new QDoubleSpinBox(this);
     this->rangeTo->setAlignment(Qt::AlignRight);
     this->rangeTo->setMaximumWidth(50);
-    this->rangeTo->setValidator(new QDoubleValidator(this));
+    this->rangeTo->setMaximum(999);
+    this->rangeTo->setMinimum(-999);
+    this->rangeTo->setValue(1.0);
     rangeLayout->addWidget(new QLabel("To:", this), 0, 2, Qt::AlignRight);
     rangeLayout->addWidget(rangeTo, 0, 3, Qt::AlignLeft);
 
-    this->steps = new QLineEdit("22050",this);
+    this->steps = new QSpinBox(this);
     this->steps->setAlignment(Qt::AlignRight);
     this->steps->setMaximumWidth(80);
-    this->rangeTo->setValidator(new QIntValidator(this));
+    this->steps->setMaximum(999999);
+    this->steps->setMinimum(1);
+    this->steps->setValue(22050);
     rangeLayout->addWidget(new QLabel("Steps:", this), 1, 0, Qt::AlignLeft);
     rangeLayout->addWidget(steps, 1, 1, 1, 2, Qt::AlignLeft);
 
@@ -101,41 +108,41 @@ Lab1::Lab1(QWidget *parent) : QWidget(parent)
     rangeV->setMinimumWidth(200);
     rangeVLayout->setSpacing(9);
 
-    this->rangeFrom1 = new QLineEdit("0.22",this);
+    this->rangeFrom1 = new QDoubleSpinBox(this);
     this->rangeFrom1->setMaximumWidth(50);
-    this->rangeFrom1->setValidator(new QDoubleValidator(this));
+    this->rangeFrom1->setValue(0.22);
     rangeVLayout->addWidget(rangeFrom1, 0, 0, Qt::AlignRight);
     rangeVLayout->addWidget(new QLabel(">", this), 0, 1, Qt::AlignHCenter);
     rangeVLayout->addWidget(new QLabel("t", this), 0, 2, Qt::AlignHCenter);
     rangeVLayout->addWidget(new QLabel(">=", this), 0, 3, Qt::AlignHCenter);
-    this->rangeTo1 = new QLineEdit("0.00",this);
+    this->rangeTo1 = new QDoubleSpinBox(this);
     this->rangeTo1->setMaximumWidth(50);
-    this->rangeTo1->setValidator(new QDoubleValidator(this));
+    this->rangeTo1->setValue(0);
     rangeVLayout->addWidget(rangeTo1, 0, 4, Qt::AlignRight);
 
 
-    this->rangeFrom2 = new QLineEdit("0.22",this);
+    this->rangeFrom2 = new QDoubleSpinBox(this);
     this->rangeFrom2->setMaximumWidth(50);
-    this->rangeFrom2->setValidator(new QDoubleValidator(this));
+    this->rangeFrom2->setValue(0.22);
     rangeVLayout->addWidget(rangeFrom2, 1, 0, Qt::AlignRight);
     rangeVLayout->addWidget(new QLabel("<=", this), 1, 1, Qt::AlignHCenter);
     rangeVLayout->addWidget(new QLabel("t", this), 1, 2, Qt::AlignHCenter);
     rangeVLayout->addWidget(new QLabel("<", this), 1, 3, Qt::AlignHCenter);
-    this->rangeTo2 = new QLineEdit("0.7",this);
+    this->rangeTo2 = new QDoubleSpinBox(this);
     this->rangeTo2->setMaximumWidth(50);
-    this->rangeTo2->setValidator(new QDoubleValidator(this));
+    this->rangeTo2->setValue(0.7);
     rangeVLayout->addWidget(rangeTo2, 1, 4, Qt::AlignRight);
 
-    this->rangeFrom3 = new QLineEdit("1.0",this);
+    this->rangeFrom3 = new QDoubleSpinBox(this);
     this->rangeFrom3->setMaximumWidth(50);
-    this->rangeFrom3->setValidator(new QDoubleValidator(this));
+    this->rangeFrom3->setValue(1.0);
     rangeVLayout->addWidget(rangeFrom3, 2, 0, Qt::AlignRight);
     rangeVLayout->addWidget(new QLabel(">=", this), 2, 1, Qt::AlignHCenter);
     rangeVLayout->addWidget(new QLabel("t", this), 2, 2, Qt::AlignHCenter);
     rangeVLayout->addWidget(new QLabel(">=", this), 2, 3, Qt::AlignHCenter);
-    this->rangeTo3 = new QLineEdit("0.7",this);
+    this->rangeTo3 = new QDoubleSpinBox(this);
     this->rangeTo3->setMaximumWidth(50);
-    this->rangeTo3->setValidator(new QDoubleValidator(this));
+    this->rangeTo3->setValue(0.7);
     rangeVLayout->addWidget(rangeTo3, 2, 4, Qt::AlignRight);
 
     rangeV->setLayout(rangeVLayout);
@@ -144,7 +151,7 @@ Lab1::Lab1(QWidget *parent) : QWidget(parent)
     //////////////NUMBER SET FOR P(t)///////////////////////////
     this->numberSet = new QLineEdit("2, 4, 99", this);
     this->numberSet->setAlignment(Qt::AlignRight);
-    this->numberSet->setValidator(new QRegExpValidator(QRegExp("[0-9,]*"), this));
+    this->numberSet->setValidator(new QRegExpValidator(QRegExp("[0-9, ]*"), this));
     this->numberSet->setMaximumWidth(80);
     leftBarLayout->addWidget(new QLabel("Set of numbers for P(t):", this), 4, 1, Qt::AlignLeft);
     leftBarLayout->addWidget(numberSet, 4, 2, Qt::AlignLeft);
@@ -160,6 +167,8 @@ Lab1::Lab1(QWidget *parent) : QWidget(parent)
     chartView->setRenderHint(QPainter::Antialiasing);
     mainLayout->addWidget(chartView);
     this->setLayout(mainLayout);
+
+    chartView->chart()->setTheme(QChart::ChartThemeDark);
 
     QObject::connect(this, SIGNAL(xChanged()), this, SLOT(calculateX()));
     QObject::connect(this, SIGNAL(yChanged()), this, SLOT(calculateY()));
@@ -180,6 +189,31 @@ Lab1::Lab1(QWidget *parent) : QWidget(parent)
     QObject::connect(userIndex, SIGNAL(editingFinished()), this, SLOT(calculateZ()));
     QObject::connect(userIndex, SIGNAL(editingFinished()), this, SLOT(calculateU()));
 
+    QObject::connect(rangeFrom, SIGNAL(editingFinished()), this, SLOT(calculateY()));
+    QObject::connect(rangeFrom, SIGNAL(editingFinished()), this, SLOT(calculateZ()));
+    QObject::connect(rangeFrom, SIGNAL(editingFinished()), this, SLOT(calculateU()));
+    QObject::connect(rangeFrom, SIGNAL(editingFinished()), this, SLOT(calculateP()));
+
+    QObject::connect(rangeTo, SIGNAL(editingFinished()), this, SLOT(calculateY()));
+    QObject::connect(rangeTo, SIGNAL(editingFinished()), this, SLOT(calculateZ()));
+    QObject::connect(rangeTo, SIGNAL(editingFinished()), this, SLOT(calculateU()));
+    QObject::connect(rangeTo, SIGNAL(editingFinished()), this, SLOT(calculateP()));
+
+    QObject::connect(steps, SIGNAL(editingFinished()), this, SLOT(calculateX()));
+    QObject::connect(steps, SIGNAL(editingFinished()), this, SLOT(calculateY()));
+    QObject::connect(steps, SIGNAL(editingFinished()), this, SLOT(calculateZ()));
+    QObject::connect(steps, SIGNAL(editingFinished()), this, SLOT(calculateU()));
+    QObject::connect(steps, SIGNAL(editingFinished()), this, SLOT(calculateP()));
+
+    QObject::connect(rangeFrom1, SIGNAL(editingFinished()), this, SLOT(calculateV()));
+    QObject::connect(rangeTo1, SIGNAL(editingFinished()), this, SLOT(calculateV()));
+    QObject::connect(rangeFrom2, SIGNAL(editingFinished()), this, SLOT(calculateV()));
+    QObject::connect(rangeTo2, SIGNAL(editingFinished()), this, SLOT(calculateV()));
+    QObject::connect(rangeFrom3, SIGNAL(editingFinished()), this, SLOT(calculateV()));
+    QObject::connect(rangeTo3, SIGNAL(editingFinished()), this, SLOT(calculateV()));
+
+    QObject::connect(numberSet, SIGNAL(editingFinished()), this, SLOT(calculateP()));
+
     calculateX();
     calculateY();
     calculateZ();
@@ -199,6 +233,11 @@ void Lab1::handleXselected(int selected)
     else
     {
         chartView->chart()->removeSeries(seriesX);
+        auto series = chartView->chart()->series();
+        for(auto item : series)
+            chartView->chart()->removeSeries(item);
+        for(auto item : series)
+            chartView->chart()->addSeries(item);
         chartView->chart()->createDefaultAxes();
     }
 }
@@ -212,7 +251,15 @@ void Lab1::handleYselected(int selected)
         chartView->chart()->createDefaultAxes();
     }
     else
+    {
         chartView->chart()->removeSeries(seriesY);
+        auto series = chartView->chart()->series();
+        for(auto item : series)
+            chartView->chart()->removeSeries(item);
+        for(auto item : series)
+            chartView->chart()->addSeries(item);
+        chartView->chart()->createDefaultAxes();
+    }
 }
 
 void Lab1::handleZselected(int selected)
@@ -224,7 +271,15 @@ void Lab1::handleZselected(int selected)
         chartView->chart()->createDefaultAxes();
     }
     else
+    {
         chartView->chart()->removeSeries(seriesZ);
+        auto series = chartView->chart()->series();
+        for(auto item : series)
+            chartView->chart()->removeSeries(item);
+        for(auto item : series)
+            chartView->chart()->addSeries(item);
+        chartView->chart()->createDefaultAxes();
+    }
 }
 
 void Lab1::handleUselected(int selected)
@@ -236,7 +291,15 @@ void Lab1::handleUselected(int selected)
         chartView->chart()->createDefaultAxes();
     }
     else
+    {
         chartView->chart()->removeSeries(seriesU);
+        auto series = chartView->chart()->series();
+        for(auto item : series)
+            chartView->chart()->removeSeries(item);
+        for(auto item : series)
+            chartView->chart()->addSeries(item);
+        chartView->chart()->createDefaultAxes();
+    }
 }
 
 void Lab1::handleVselected(int selected)
@@ -250,6 +313,11 @@ void Lab1::handleVselected(int selected)
     else
     {
         chartView->chart()->removeSeries(seriesV);
+        auto series = chartView->chart()->series();
+        for(auto item : series)
+            chartView->chart()->removeSeries(item);
+        for(auto item : series)
+            chartView->chart()->addSeries(item);
         chartView->chart()->createDefaultAxes();
     }
 }
@@ -265,6 +333,11 @@ void Lab1::handlePselected(int selected)
     else
     {
         chartView->chart()->removeSeries(seriesP);
+        auto series = chartView->chart()->series();
+        for(auto item : series)
+            chartView->chart()->removeSeries(item);
+        for(auto item : series)
+            chartView->chart()->addSeries(item);
         chartView->chart()->createDefaultAxes();
     }
 }
@@ -348,8 +421,8 @@ void Lab1::calculateX()
 void Lab1::calculateY()
 {
     QVector<int> indexData = parsedIndex();
-    double rangeF = this->rangeFrom->text().toDouble();
-    double rangeT = this->rangeTo->text().toDouble();
+    double rangeF = this->rangeFrom->value();
+    double rangeT = this->rangeTo->value();
     if(rangeF>rangeT)
         return;
     int steps = this->steps->text().toInt();
@@ -373,8 +446,8 @@ void Lab1::calculateY()
 void Lab1::calculateZ()
 {
     QVector<int> indexData = parsedIndex();
-    double rangeF = this->rangeFrom->text().toDouble();
-    double rangeT = this->rangeTo->text().toDouble();
+    double rangeF = this->rangeFrom->value();
+    double rangeT = this->rangeTo->value();
     if(rangeF>rangeT)
         return;
     int steps = this->steps->text().toInt();
@@ -399,8 +472,8 @@ void Lab1::calculateZ()
 void Lab1::calculateU()
 {
     QVector<int> indexData = parsedIndex();
-    double rangeF = this->rangeFrom->text().toDouble();
-    double rangeT = this->rangeTo->text().toDouble();
+    double rangeF = this->rangeFrom->value();
+    double rangeT = this->rangeTo->value();
     if(rangeF>rangeT)
         return;
     int steps = this->steps->text().toInt();
@@ -423,23 +496,21 @@ void Lab1::calculateU()
 
 void Lab1::calculateV()
 {
-    double range1From = rangeFrom1->text().toDouble();
-    double range2From = rangeFrom2->text().toDouble();
-    double range3From = rangeFrom3->text().toDouble();
-    double range1To = rangeTo1->text().toDouble();
-    double range2To = rangeTo2->text().toDouble();
-    double range3To = rangeTo3->text().toDouble();
+    double range1From = rangeFrom1->value();
+    double range2From = rangeFrom2->value();
+    double range3From = rangeFrom3->value();
+    double range1To = rangeTo1->value();
+    double range2To = rangeTo2->value();
+    double range3To = rangeTo3->value();
 
-    double rangeF = this->rangeFrom->text().toDouble();
-    double rangeT = this->rangeTo->text().toDouble();
-    if(rangeF>rangeT)
-        return;
     int steps = this->steps->text().toInt();
     if(steps<=0)
         return;
-    if(range1To<rangeF || range1From<range1To || range2From>range2To || range3From<range3To || range3From>rangeT)
+    if(range1From<range1To || range2From>range2To || range3From<range3To)
         return;
-    double step = (rangeT - rangeF)/steps;
+    if(range1To>range3From)
+        return;
+    double step = (range3From - range1To)/steps;
 
     bool contains = chartView->chart()->series().contains(seriesV);
     if(contains)
@@ -461,8 +532,8 @@ void Lab1::calculateV()
 void Lab1::calculateP()
 {
     QVector<int> set = parsedNumberSet();
-    double rangeF = this->rangeFrom->text().toDouble();
-    double rangeT = this->rangeTo->text().toDouble();
+    double rangeF = this->rangeFrom->value();
+    double rangeT = this->rangeTo->value();
     if(rangeF>rangeT)
         return;
     int steps = this->steps->text().toInt();
@@ -470,6 +541,11 @@ void Lab1::calculateP()
         return;
     double step = (rangeT - rangeF)/steps;
     Q_ASSERT(set.length()>=3);
+
+    bool contains = chartView->chart()->series().contains(seriesP);
+    if(contains)
+       chartView->chart()->removeSeries(seriesP);
+
     seriesP->clear();
     for(double x = rangeF; x<=rangeT; x+=step)
     {
@@ -480,4 +556,7 @@ void Lab1::calculateP()
         }
         seriesP->append(x, y);
     }
+
+    if(contains)
+        handlePselected(2);
 }

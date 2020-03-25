@@ -15,6 +15,10 @@
 #include <QCheckBox>
 #include <QValueAxis>
 #include <QtMath>
+#include <QDoubleSpinBox>
+#include <QSpinBox>
+
+//TODO add zooming, change default theme
 
 using namespace QtCharts;
 
@@ -48,17 +52,17 @@ private:
     QCheckBox* chartV;
     QCheckBox* chartP;
 
-    QLineEdit* userIndex;
-    QLineEdit* rangeFrom;
-    QLineEdit* rangeTo;
-    QLineEdit* steps;
+    QSpinBox* userIndex;
+    QDoubleSpinBox* rangeFrom;
+    QDoubleSpinBox* rangeTo;
+    QSpinBox* steps;
 
-    QLineEdit* rangeFrom1;
-    QLineEdit* rangeTo1;
-    QLineEdit* rangeFrom2;
-    QLineEdit* rangeTo2;
-    QLineEdit* rangeFrom3;
-    QLineEdit* rangeTo3;
+    QDoubleSpinBox* rangeFrom1;
+    QDoubleSpinBox* rangeTo1;
+    QDoubleSpinBox* rangeFrom2;
+    QDoubleSpinBox* rangeTo2;
+    QDoubleSpinBox* rangeFrom3;
+    QDoubleSpinBox* rangeTo3;
 
     QLineEdit* numberSet;
 

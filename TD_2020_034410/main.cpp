@@ -1,10 +1,18 @@
 ﻿#include "mainwindow.h"
 #include <QApplication>
+#include <QFile>
+#include <QTextStream>
+#include "framelesswindow/framelesswindow.h"
+#include "DarkStyle.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+    a.setStyle(new DarkStyle);
+    FramelessWindow framelessWindow;
+    MainWindow* w = new MainWindow();
+    framelessWindow.setContent(w);
+    framelessWindow.setWindowTitle(w->windowTitle());
+    framelessWindow.show();
     return a.exec();
 }
