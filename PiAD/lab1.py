@@ -34,7 +34,7 @@ a = np.random.randint(low=0, high=10, size=(3, 3))
 b = np.random.randint(low=0, high=10, size=(3, 3))
 print(a + b)
 print(a * b)
-print(np.divide(a, b))  # divide by zero error
+# print(np.divide(a, b))  # divide by zero error
 print(a ** b)
 print(a >= 4)
 print(b.trace())
@@ -62,5 +62,61 @@ a.sort(axis=0)
 a[::-1].argsort(axis=1)
 b = np.array([(1, 'MZ', 'mazowieckie'), (2, 'ZP', 'zachodniopomorskie'), (3, 'ML', 'małopolskie')])
 b.reshape((3, 3))
-b=b[b[:, 1].argsort()];
-print()
+b = b[b[:, 1].argsort()];
+print(b[2, 2])
+
+# Zadania podsumowujące:
+# Zadanie 1:
+arr = np.random.randint(100, size=(10, 5))
+print(np.trace(arr))
+print(np.diag(arr))
+
+# Zadanie 2:
+a = np.random.randn(4)
+b = np.random.randn(4)
+print(a * b)
+
+# Zadanie 3:
+a = np.random.randint(1, 100, size=(5, 5))
+b = np.random.randint(1, 100, size=(5, 5))
+print(a+b)
+
+# Zadanie 4:
+a = np.random.randint(1, 100, size=(5, 4))
+b = np.random.randint(1, 100, size=(4, 5))
+b = b.reshape(5, 4)
+print(a+b)
+
+# Zadanie 5:
+print(a[:, 2] * (b[:, 3]))
+
+# Zadanie 6:
+a = (np.random.normal(0, 10, size=(5, 5)))
+b = (np.random.uniform(0, 10, size=(5, 5)))
+print(a.mean(), b.mean())
+print(a.std(), b.std())
+print(a.var(), b.var())
+
+# Zadanie 7:
+a = np.random.randint(1, 100, size=(4, 4))
+b = np.random.randint(1, 100, size=(4, 4))
+print(a*b)
+print(a.dot(b))
+
+# Zadanie 8:
+a = np.random.randint(1, 100, size=(4, 4))
+a = np.lib.stride_tricks.as_strided(a, (5, 3))
+print(a)
+
+# Zadanie 9:
+a = np.random.randint(1, 100, size=(4, 4))
+b = np.random.randint(1, 100, size=(4, 4))
+print(np.hstack((a, b)), np.vstack((a, b)))
+
+# Zadanie 10:
+a = np.arange(24).reshape(4, 6)
+a = np.lib.stride_tricks.as_strided(a, shape=(6, 2, 3), strides=(12, 24, 4))
+print(a)
+print('max', np.amax(a, axis=2))
+
+
