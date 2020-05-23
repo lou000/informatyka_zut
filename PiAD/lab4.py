@@ -96,15 +96,6 @@ plot.show()
 
 plot.figure(figsize=(15, 10))
 
-img = plot.imread('cat.jpg', format='jpg').copy()
-r = img[:, :, 0]
-g = img[:, :, 1]
-b = img[:, :, 2]
-lumination = r * 0.21 + g * 0.72 + b * 0.07
-plot.subplot(2, 2, 1)
-plot.imshow(lumination)
-plot.show()
-
 img2 = plot.imread('pic.jpg', format='jpg').copy()
 plot.imshow(img2)
 plot.show()
@@ -114,6 +105,7 @@ r = img2[:, :, 0]
 g = img2[:, :, 1]
 b = img2[:, :, 2]
 
+lumination = r * 0.21 + g * 0.72 + b * 0.07
 h2 = plot.hist(lumination.ravel(), bins=255)
 minima = argrelextrema(h2[0], np.less)
 _min = np.mean(minima)
@@ -121,7 +113,6 @@ print(_min)
 plot.show()
 
 plot.figure(figsize=(15, 10))
-lumination = r * 0.21 + g * 0.72 + b * 0.07
 rows, columns = lumination.shape
 for i in range(rows):
     for j in range(columns):
