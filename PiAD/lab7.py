@@ -1,10 +1,11 @@
+import self as self
 from sklearn import datasets
 import scipy
 from scipy.spatial import ConvexHull, convex_hull_plot_2d
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.cluster import KMeans
 from sklearn.mixture import GaussianMixture
-from sklearn.metrics import jaccard_score
+from sklearn.metrics import jaccard_score, mean_squared_error
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 from scipy.stats import mode
@@ -82,15 +83,14 @@ def plot_PCA(data, labels, name):
     for target, color in zip(targets, colors):
         idx = labels == target
         group = _X_reduced[idx]
-        grp2 = X[idx]
+        grp2 = data[idx]
         _ax.scatter(group[:, 0], group[:, 1], c=color, s=50)
         _ax2.scatter3D(grp2[:, 0], grp2[:, 1], grp2[:, 2], c=color)
         hull = ConvexHull(group)
         for simplex in hull.simplices:
             _ax.plot(group[simplex, 0], group[simplex, 1], 'k-')
     _ax.grid()
-    # plt.show()
-
+    plt.show()
 
 
 complete_labels = np.array(find_perm(3, Y, cluster_cmp.labels_))
@@ -113,12 +113,12 @@ for i, point in enumerate(X_reduced):
         ax.plot(point[0], point[1], 'go')
         ax2.scatter3D(X[i, 0], X[i, 1], X[i, 2], c="green")
 ax.grid()
-# plt.show()
-# plt.show()
+plt.show()
+plt.show()
 
 Z = hr.linkage(X, method='complete')
 hr.dendrogram(Z)
-# plt.show()
+plt.show()
 
 # 3
 from PIL import Image
@@ -131,7 +131,7 @@ im_data = np.reshape(im_data, (size[0]*size[1], 3))
 image.show()
 
 # c_sizes = [2, 3, 5, 10, 30, 100]
-c_sizes = [10, 5, 3, 2]
+c_sizes = [5, 3, 2]
 for s in c_sizes:
     cluster_KMeans = KMeans(n_clusters=s, init='random').fit(im_data)
     centers = cluster_KMeans.cluster_centers_
@@ -141,7 +141,13 @@ for s in c_sizes:
         for j in range(size[0]*size[1]):
             if i == labels[j]:
                 data2[j] = centers[i]
+    error = []
+    for i in range(size[0]*size[1]):
+        error.append(mean_squared_error(im_data[i], data2[i]))
+    error = np.array(error).reshape((size[1], size[0]))
     data2 = np.reshape(data2, (size[1], size[0], 3))
     image2 = Image.fromarray(data2)
     image2.show()
+    image3 = Image.fromarray(error)
+    image3.show()
     # cluster_AC = AgglomerativeClustering(n_clusters=s, linkage='single').fit(im_data)

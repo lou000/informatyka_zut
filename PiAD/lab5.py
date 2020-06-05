@@ -92,7 +92,7 @@ print(np.array(data))
 #
 
 # 6
-# rcv1 = fetch_rcv1()
-# X = rcv1["data"]
-# Y = rcv1.target[:87]
-# breakpoint()
+rcv1 = fetch_rcv1()
+X = rcv1["data"]
+Y = rcv1.target[:87]
+breakpoint()
