@@ -45,6 +45,12 @@ public:
     void addTesters(User* tester)                             {m_testers.append(tester);}
     void removeTesters(User* tester)                          {m_testers.removeOne(tester);}
     void setStatus(Status status)                             {m_status = status;}
+
+    static QIcon getIconFromIssueType(IssueType type);
+    static QString getIssueTypeText(IssueType type);
+    static IssueType getIssueTypeFromText(QString type);
+    static QString getStatusText(Status s);
+    static Status getStatusFromText(QString s);
 //    virtual void saveChanges() = 0;
 
 protected:

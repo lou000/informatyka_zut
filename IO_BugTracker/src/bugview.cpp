@@ -2,6 +2,7 @@
 #include <QLabel>
 #include <QDebug>
 #include <QHeaderView>
+#include "issue.h"
 
 
 BugView::BugView(QWidget *parent)
@@ -12,52 +13,13 @@ BugView::BugView(QWidget *parent)
 
 void BugView::fillRows(const QVector<IssueTicket *> &issues)
 {
+    this->horizontalHeader()->setCascadingSectionResizes(true);
     for(int i=0; i<issues.length(); i++)
     {
         auto issue = issues.at(i);
-        QString type;
-        QIcon icon;
-        QString status;
-        switch(issues.at(i)->type())
-        {
-        case IssueType::Bug:
-            type = "Bug";
-            icon = QIcon(":/icons/bug_icon.png");
-            break;
-        case IssueType::Task:
-            type = "Task";
-            icon = QIcon(":/icons/task_icon.png");
-            break;
-        default:
-            break;
-        }
-
-        switch(issues.at(i)->status())
-        {
-        case Status::Closed:
-            status = "Closed";
-            break;
-        case Status::CheckIn:
-            status = "CheckIn";
-            break;
-        case Status::Created:
-            status = "Created";
-            break;
-        case Status::Approved:
-            status = "Approved";
-            break;
-        case Status::InProgress:
-            status = "InProgress";
-            break;
-        case Status::NotApproved:
-            status = "NotApproved";
-            break;
-        default:
-            break;
-        }
 
         QLabel * label = new QLabel();
-        label->setPixmap(icon.pixmap(QSize(30,30)));
+        label->setPixmap(IssueTicket::getIconFromIssueType(issue->type()).pixmap(QSize(30,30)));
         this->setCellWidget(i, 0, label);
         QTableWidgetItem* id = new QTableWidgetItem(QString::number(issue->id()));
         this->setItem(i, 1, id);
@@ -67,7 +29,7 @@ void BugView::fillRows(const QVector<IssueTicket *> &issues)
         this->setItem(i, 3, s_desc);
         QTableWidgetItem* desc = new QTableWidgetItem(issue->description());
         this->setItem(i, 4, desc);
-        QTableWidgetItem* s = new QTableWidgetItem(status);
+        QTableWidgetItem* s = new QTableWidgetItem(IssueTicket::getStatusText(issue->status()));
         this->setItem(i, 7, s);
         QTableWidgetItem* dateAdded = new QTableWidgetItem(issue->dateAdded().toString());
         this->setItem(i, 8, dateAdded);
@@ -75,4 +37,7 @@ void BugView::fillRows(const QVector<IssueTicket *> &issues)
         this->setItem(i, 9, dateStatus);
     }
     this->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    this->horizontalHeader()->resizeSection(4, 400);
+//    this->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+//    this->horizontalHeader()->setMaximumSectionSize(50);
 }

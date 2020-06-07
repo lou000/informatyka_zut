@@ -6,15 +6,11 @@ SqlWorker::SqlWorker(int timerInterval)
 {
     this->timerInterval = timerInterval;
     this->updateTimer = new QTimer(this);
-}
-
-void SqlWorker::initialize()
-{
     QObject::connect(updateTimer, &QTimer::timeout, [=]() {
         checkDbAndUpdate();
     });
-    updateTimer->start(timerInterval);
 }
+
 
 void SqlWorker::checkDbAndUpdate()
 {
@@ -53,6 +49,15 @@ void SqlWorker::updateData()
         }
         temp.append(issue);
     }
+    qDebug()<<"Issues Updated!!";
     emit resultIssues(temp);
+
+}
+
+void SqlWorker::handleAddIssue(IssueType type, QString s_desc, QString desc, Status status, int proj_id)
+{
+ auto q = Queries::addIssue(type, s_desc, desc, status, proj_id);
+ q.exec();
+ updateData();
 
 }

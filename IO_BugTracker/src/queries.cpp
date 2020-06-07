@@ -34,3 +34,21 @@ QSqlQuery Queries::setqGetIssues(QString connection)
     q.prepare("EXEC IO_BugTracker.dbo.getIssues;");
     return q;
 }
+
+QSqlQuery Queries::addIssue(IssueType type, QString s_desc, QString desc, Status status, int proj_id)
+{
+    QSqlDatabase db = QSqlDatabase::database("BugTracker");
+    if(!db.isValid() || !db.isOpen())
+        return QSqlQuery();
+    QSqlQuery q(db);
+    q.setForwardOnly(true);
+    q.prepare("EXEC IO_BugTracker.dbo.addIssue :type, :s_desc, :desc, :status, :dateAdded, :dateStatus, :projID; " );
+    q.bindValue(":type", type);
+    q.bindValue(":s_desc", s_desc);
+    q.bindValue(":desc", desc);
+    q.bindValue(":status", status);
+    q.bindValue(":dateAdded", QDateTime::currentDateTime());
+    q.bindValue(":dateStatus", QDateTime::currentDateTime());
+    q.bindValue(":projID", proj_id);
+    return q;
+}
