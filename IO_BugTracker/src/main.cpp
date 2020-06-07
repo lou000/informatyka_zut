@@ -3,6 +3,7 @@
 #include "external/DarkStyle.h"
 #include <QScreen>
 #include <QApplication>
+#include "threadcontroller.h"
 
 int main(int argc, char *argv[])
 {
