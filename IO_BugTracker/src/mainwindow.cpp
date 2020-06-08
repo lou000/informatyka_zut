@@ -68,8 +68,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     QObject::connect(accept_button, &QPushButton::clicked, this, [=]
         {
-         emit controller->addIssue(IssueTicket::getIssueTypeFromText(issueType->currentText()), s_desc->toPlainText(),
-                                    desc->toPlainText(), IssueTicket::getStatusFromText(status->currentText()), proj_id->value());
+         emit controller->addIssue(IssueTicket::getIssueTypeFromText(issueType->currentText()),
+                                   s_desc->toPlainText(), desc->toPlainText(),
+                                   IssueTicket::getStatusFromText(status->currentText()),
+                                   proj_id->value());
         });
 
 
