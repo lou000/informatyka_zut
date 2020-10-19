@@ -8,6 +8,11 @@
 #include <QLabel>
 #include <QDesktopWidget>
 #include <QThreadPool>
+#include <QPushButton>
+#include <QSlider>
+#include <QGridLayout>
+#include <QGraphicsDropShadowEffect>
+
 #include "imageprocessing.h"
 #define START_HEIGHT 600
 #define START_WIDTH 1000
@@ -25,6 +30,26 @@ public:
     QSplitter* splitter;
     QLabel* originalImage;
     QLabel* processedImage;
+
+    QWidget* left;
+    QWidget* right;
+    QWidget* leftControls;
+    QWidget* rightControls;
+
+    QPushButton* rgbMask;
+    QPushButton* hsvMask;
+    QPushButton* YCbCrMask;
+    QPushButton* fullMask;
+
+    QSlider* saturation;
+    QSlider* brightness;
+    QSlider* contrast;
+    QSlider* denoising;
+    QSlider* sharpening;
+    QSlider* whiteBalance;
+
+    ImageProcessor::ModeFlags flags;
+
 
 
 public slots:

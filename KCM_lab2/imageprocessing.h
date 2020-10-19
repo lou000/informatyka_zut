@@ -45,7 +45,7 @@ public:
     Q_ENUM(Mode)
     Q_DECLARE_FLAGS(ModeFlags, Mode)
 
-    ImageProcessor(const QImage &img);
+    ImageProcessor(const QImage &img, ModeFlags flags);
     virtual void run() override;
 
 private:
