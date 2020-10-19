@@ -87,23 +87,8 @@ void ImageProcessor::run()
             if(flags.testFlag(Mode::Full))
                 pixVal = ((rgbMask && YCbCrMask) || (rgbMask && hsvMask));
             else
-            {
-                if(flags.testFlag(Mode::HSV) && flags.testFlag(Mode::RGB))
-                    pixVal = hsvMask && rgbMask;
-                else if (flags.testFlag(Mode::HSV) && flags.testFlag(Mode::YCbCr))
-                    pixVal = hsvMask && YCbCrMask;
-                else if (flags.testFlag(Mode::RGB) && flags.testFlag(Mode::YCbCr))
-                    pixVal = rgbMask && YCbCrMask;
-                else
-                {
-                    if(flags.testFlag(Mode::HSV))
-                        pixVal = hsvMask;
-                    if(flags.testFlag(Mode::RGB))
-                        pixVal = rgbMask;
-                    if(flags.testFlag(Mode::YCbCr))
-                        pixVal = YCbCrMask;
-                }
-            }
+                pixVal = rgbMask || YCbCrMask || hsvMask;
+
             pixVal *= 255;
 
             QRgb val = qRgb(pixVal, pixVal, pixVal);
