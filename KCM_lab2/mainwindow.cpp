@@ -44,7 +44,12 @@ MainWindow::MainWindow(QWidget *parent)
     originalImage->setMinimumSize(QSize(100, 100));
     processedImage->setMinimumSize(QSize(100, 100));
 
-    surface = new MyVideoSurface(originalImage, this);
+    float initialRatio = (static_cast<float>(this->width())/2)/this->height();
+    surface = new MyVideoSurface(originalImage, initialRatio, initialRatio, this);
+    connect(splitter, &QSplitter::splitterMoved, this, [&]{
+        surface->setImageRatios(static_cast<float>(processedImage->width())/processedImage->height(),
+                                static_cast<float>((float)originalImage->width())/processedImage->height());
+    });
     camera->setViewfinder(surface);
     connect(surface, SIGNAL(doProcessImage(const QImage)), this, SLOT(handleAddProcessingToPool(const QImage)));
 

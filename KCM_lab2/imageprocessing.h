@@ -13,9 +13,11 @@
 class MyVideoSurface: public QAbstractVideoSurface{
     Q_OBJECT
 public:
-    MyVideoSurface(QLabel* oImage, QObject* parent = nullptr) : QAbstractVideoSurface(parent)
+    MyVideoSurface(QLabel* oImage, float rProcessed, float rOriginal, QObject* parent = nullptr) : QAbstractVideoSurface(parent)
     {
         originalImage = oImage;
+        ratioOriginal = rOriginal;
+        ratioProcessed = rProcessed;
     }
 
     QList<QVideoFrame::PixelFormat> supportedPixelFormats(QAbstractVideoBuffer::HandleType type) const;
@@ -23,9 +25,14 @@ public:
 
 private:
     QLabel* originalImage;
+    float ratioProcessed;
+    float ratioOriginal;
 
 signals:
     void doProcessImage(const QImage &img);
+
+public slots:
+    void setImageRatios(float ratioProcessed, float ratioOriginal);
 };
 
 

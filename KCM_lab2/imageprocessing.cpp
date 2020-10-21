@@ -22,12 +22,28 @@ bool MyVideoSurface::present(const QVideoFrame &frame)
 
         auto mirrored = img.mirrored(true, true);
 
-        QPixmap pix1 = QPixmap::fromImage(mirrored).scaled(originalImage->size(), Qt::AspectRatioMode::KeepAspectRatioByExpanding);
+        //crop image to fit frame
+        float imgRatio = static_cast<float>(mirrored.width())/mirrored.height();
+        float croppedOrig = imgRatio - ratioOriginal;
+        float croppedProc = imgRatio - ratioProcessed;
+
+        auto croppedOriginal = mirrored.copy(mirrored.height()*croppedOrig/2, 0,
+                                             mirrored.height()*ratioOriginal, mirrored.height());
+        auto croppedProcessed = mirrored.copy(mirrored.height()*croppedProc/2, 0,
+                                             mirrored.height()*ratioProcessed, mirrored.height());
+
+        QPixmap pix1 = QPixmap::fromImage(croppedOriginal).scaled(originalImage->size(), Qt::AspectRatioMode::KeepAspectRatioByExpanding);
         originalImage->setPixmap(pix1);
-        emit doProcessImage(mirrored);
+        emit doProcessImage(croppedProcessed);
         return true;
     }
     return false;
+}
+
+void MyVideoSurface::setImageRatios(float ratioProcessed, float ratioOriginal)
+{
+    this->ratioOriginal = ratioOriginal;
+    this->ratioProcessed = ratioProcessed;
 }
 
 ImageProcessor::ImageProcessor(const QImage &img, ModeFlags flags)
@@ -38,11 +54,10 @@ ImageProcessor::ImageProcessor(const QImage &img, ModeFlags flags)
 
 void ImageProcessor::run()
 {
-    auto temp = img.copy();
-    for(int w=0; w<temp.width(); w++)
-        for(int h=0; h<temp.height(); h++)
+    for(int w=0; w<img.width(); w++)
+        for(int h=0; h<img.height(); h++)
         {
-            QColor pixel = temp.pixel(w, h);
+            QColor pixel = img.pixel(w, h);
             auto hue = pixel.hue();
             auto sat = pixel.saturationF();
             auto r = pixel.red();
@@ -63,7 +78,7 @@ void ImageProcessor::run()
             // jatakiajanvi12@gmail.com
 
 
-            int pixVal = 0;
+            int pixVal = 255;
             bool hsvMask = 0;
             bool rgbMask = 0;
             bool YCbCrMask = 0;
@@ -85,15 +100,13 @@ void ImageProcessor::run()
                             && Cr <= (-1.15*Cb)+301.75 && Cr <= (-2.2857*Cb)+432.85;
 
             if(flags.testFlag(Mode::Full))
-                pixVal = ((rgbMask && YCbCrMask) || (rgbMask && hsvMask));
+                pixVal *= ((rgbMask && YCbCrMask) || (rgbMask && hsvMask));
             else
-                pixVal = rgbMask || YCbCrMask || hsvMask;
-
-            pixVal *= 255;
+                pixVal *= rgbMask || YCbCrMask || hsvMask;
 
             QRgb val = qRgb(pixVal, pixVal, pixVal);
-            temp.setPixel(w, h, val);
+            img.setPixel(w, h, val);
         }
-    emit imageProcessed(QPixmap::fromImage(temp));
+    emit imageProcessed(QPixmap::fromImage(img));
 }
 
