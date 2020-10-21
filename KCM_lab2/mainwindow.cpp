@@ -199,8 +199,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(rgbMask, &QPushButton::toggled, this, [=](bool checked)
             {
                 flags.setFlag(ImageProcessor::Mode::RGB, checked);
-                if(checked)
-                    fullMask->setChecked(false);
             });
 
     hsvMask   = new QPushButton("HSV", rightControls);
@@ -210,8 +208,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(hsvMask, &QPushButton::toggled, this, [=](bool checked)
             {
                 flags.setFlag(ImageProcessor::Mode::HSV, checked);
-                if(checked)
-                    fullMask->setChecked(false);
             });
 
     YCbCrMask = new QPushButton("YCbCr", rightControls);
@@ -221,8 +217,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(YCbCrMask, &QPushButton::toggled, this, [=](bool checked)
             {
                 flags.setFlag(ImageProcessor::Mode::YCbCr, checked);
-                if(checked)
-                    fullMask->setChecked(false);
             });
 
     fullMask  = new QPushButton("FULL", rightControls);
@@ -233,13 +227,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(fullMask, &QPushButton::toggled, this, [=](bool checked)
             {
                 flags.setFlag(ImageProcessor::Mode::Full, checked);
-                if(checked)
-                {
-                    hsvMask->setChecked(false);
-                    rgbMask->setChecked(false);
-                    YCbCrMask->setChecked(false);
-                }
             });
+
+    grp = new QButtonGroup(this);
+    grp->addButton(rgbMask);
+    grp->addButton(hsvMask);
+    grp->addButton(YCbCrMask);
+    grp->addButton(fullMask);
 
     leftLayout->addWidget(leftControls, 0, 0);
     rightLayout->addWidget(rightControls, 0, 0);

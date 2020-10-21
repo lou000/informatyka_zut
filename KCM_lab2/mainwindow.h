@@ -12,6 +12,7 @@
 #include <QSlider>
 #include <QGridLayout>
 #include <QGraphicsDropShadowEffect>
+#include <QButtonGroup>
 
 #include "imageprocessing.h"
 #define START_HEIGHT 600
@@ -35,6 +36,8 @@ public:
     QWidget* right;
     QWidget* leftControls;
     QWidget* rightControls;
+
+    QButtonGroup* grp;
 
     QPushButton* rgbMask;
     QPushButton* hsvMask;
