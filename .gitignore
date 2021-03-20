@@ -259,3 +259,14 @@ fabric.properties
 
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
+
+#qt build folders
+/build*
+.buildconfig
+*.o
+*.a
+*.so
+
+#linux executables have no fucking extension, well played
+lab03
+lab02
