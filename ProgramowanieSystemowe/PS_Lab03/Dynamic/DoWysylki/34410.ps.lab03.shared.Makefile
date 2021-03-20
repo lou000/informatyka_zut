@@ -18,8 +18,10 @@ $(TARGET): $(OBJ) $(TARGET_LIB)
 
 $(TARGET_LIB): $(OBJ_LIB)
 	$(CC) -shared -fPIC -o $@ $^
+
+$(OBJ_LIB): lib.c
+	$(CC) -c -fPIC lib.c
 	
 
 clean:
 	rm -f $(OBJ) $(TARGET) $(TARGET_LIB) $(OBJ_LIB)
-

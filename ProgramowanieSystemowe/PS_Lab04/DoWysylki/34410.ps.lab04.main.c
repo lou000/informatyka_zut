@@ -1,3 +1,7 @@
+// PS IN1 320 LAB04
+// Maciej Lewicki
+// lm34410@zut.edu.pl
+
 #include <stdbool.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -26,7 +30,7 @@ int main(int argc, char **argv)
             repeats = atoi(optarg);
             if(repeats == 0)
                 fprintf(stderr, "The nreps argument has to be a number and cannot be 0.\n"
-"                                Usage: %s [-t nreps] [-v] application\n",
+                                "Usage: %s [-t nreps] [-v] application\n",
                                            argv[0]);
             break;
         case '?':
@@ -81,12 +85,6 @@ int main(int argc, char **argv)
             }
             if(execvp(appName, appArgs) == -1)
                 fprintf(stderr, "The command '%s' failed to run.\n", argv[optind]);
-            if(!vFlag && null>0)
-            {
-                close(null);
-                close(null);
-            }
-            _exit(0);
         }
         else
         {
@@ -111,4 +109,3 @@ int main(int argc, char **argv)
 
     return 0;
 }
-

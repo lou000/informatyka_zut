@@ -60,6 +60,8 @@ int main(int argc, char **argv)
             printf("\n");
         }
     }
+    if(libHandle)
+        dlclose(libHandle);
     return 0;
 }
 

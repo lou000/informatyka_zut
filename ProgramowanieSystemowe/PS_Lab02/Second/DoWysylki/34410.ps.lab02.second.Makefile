@@ -3,7 +3,7 @@
 # lm34410@zut.edu.pl
 
 CC = gcc
-OBJFILES = 34410.ps.lab02.second.lib.o 34410.ps.lab02.second.main.o
+OBJFILES = lib.o main.o
 TARGET = lab02
 
 all: $(TARGET)

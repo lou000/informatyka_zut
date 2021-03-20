@@ -9,25 +9,11 @@
 #include <unistd.h>
 #include <grp.h>
 #include <pwd.h>
-#include <dlfcn.h>
+
+extern void printUserGroups();
 
 int main(int argc, char **argv)
 {
-    void (*printUserGroups)(char*) = 0;
-    void* libHandle = dlopen("libGroups.so", RTLD_NOW);
-    if(!libHandle)
-        printf("Couldnt load lib!\n");
-    else{
-        dlerror(); //clear
-        *(void **) (&printUserGroups) = dlsym(libHandle, "printUserGroups");
-
-        char* error;
-        if ((error = dlerror()) != NULL)  {
-            printf("Error while loading func from library: %s\n", error);
-        }
-    }
-
-
     bool hFlag = false;
     bool gFlag = false;
     int arg;
@@ -54,9 +40,8 @@ int main(int argc, char **argv)
         if(utmp->ut_type == USER_PROCESS)
         {
             printf("%s  ", utmp->ut_user);
-            if(hFlag) printf("(%d)  ",  *utmp->ut_addr_v6); //??? o to chodzi?
-            if(printUserGroups)
-                if(gFlag) printUserGroups(utmp->ut_user);
+            if(hFlag) printf("(%s)  ",  utmp->ut_host); //??? o to chodzi?
+            if(gFlag) printUserGroups(utmp->ut_user);
             printf("\n");
         }
     }
