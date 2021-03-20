@@ -45,11 +45,12 @@ int main(int argc, char **argv)
 
 
     char* appName = argv[optind];
-    fprintf(stdout, "Measuring time[ms]: %s ", argv[optind]);
+    fprintf(stdout, "\nMeasuring time[ms]: %s ", argv[optind]);
     char* appArgs[argc - optind];
     for(int i=optind, j=0; i<argc; i++, j++)
     {
-        fprintf(stdout, "%s ", argv[i]);
+        if(i != optind)
+            fprintf(stdout, "%s ", argv[i]);
         appArgs[j] = argv[i];
     }
     fprintf(stdout, "\n===================================\n");
@@ -110,3 +111,4 @@ int main(int argc, char **argv)
 
     return 0;
 }
+
