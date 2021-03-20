@@ -40,7 +40,7 @@ int main(int argc, char **argv)
         if(utmp->ut_type == USER_PROCESS)
         {
             printf("%s  ", utmp->ut_user);
-            if(hFlag) printf("(%d)  ",  *utmp->ut_addr_v6); //??? o to chodzi?
+            if(hFlag) printf("(%s)  ",  utmp->ut_host); //??? o to chodzi?
             if(gFlag) printUserGroups(utmp->ut_user);
             printf("\n");
         }

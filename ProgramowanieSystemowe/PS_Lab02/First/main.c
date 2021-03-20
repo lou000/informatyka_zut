@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <utmpx.h>
 #include <stdio.h>
-#include <stdbool.h>
+#include <pwd.h>
 
 int main() {
 
@@ -14,7 +14,10 @@ int main() {
     while((utmp = getutxent())) // get next structure
     {
         if(utmp->ut_type == USER_PROCESS)
-            printf("UID %s   LOGIN: %s\n", utmp->ut_id, utmp->ut_user);
+        {
+            struct passwd* pw = getpwnam(utmp->ut_user);
+            printf("UID %d   LOGIN: %s\n", pw->pw_uid, pw->pw_name);
+
+        }
     }
-    // nie za bardzo wiem po co bylo mi getpwnam
 }
