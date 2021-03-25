@@ -12,7 +12,15 @@ int main()
     const char* board = "010020300004005060070000008006900070000100002030048000500006040000800106008000000";
 
     Sudoku* sud = new Sudoku(3, board);
+    std::wcout<<"Board string: "<<board<<"\n";
+    std::wcout<<"Board hash  : "<<sud->hash_code()<<"\n\n";
     std::wcout<<sud->to_string();
+
+    std::wcout<<"\n\n";
+
+    for(int i=0; i<sud->getSize(); i++)
+        assert(sud->validateCell(i+1));
+
 
     delete sud;
 

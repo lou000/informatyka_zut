@@ -14,12 +14,16 @@ public:
     Sudoku(const Sudoku&) = delete;
     Sudoku& operator=(Sudoku const&) = delete;
 
+    uint8_t getSize(){return gridSize;}
+
 private:
     int* board = nullptr;
-    uint8_t n = 0;
-    uint8_t gridSize = 0;
+    const uint8_t n = 0;
+    const uint8_t nn = 0;
+    const uint8_t gridSize = 0;
 
 public:
+    bool validateCell(uint8_t cellNr) const;
     virtual std::unique_ptr<graph_state> clone() const override;
     virtual size_t hash_code() const override;
     virtual std::vector<std::unique_ptr<graph_state>> get_successors() const override;
