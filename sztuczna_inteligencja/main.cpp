@@ -30,8 +30,6 @@ int main()
         std::wcout<<solution->to_string();
     }
 
-
-
     return 0;
 }
 

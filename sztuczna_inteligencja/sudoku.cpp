@@ -320,6 +320,7 @@ bool Sudoku::is_equal(const graph_state &s) const
 {
     const Sudoku* st = dynamic_cast<const Sudoku*>(&s);
     assert(size == st->size);
-    return memcmp(grid, st->grid, size * sizeof (uint8));
+    int eq = memcmp(grid, st->grid, size * sizeof (uint8)); //wow who knew memcmp = 0 if equal
+    return eq == 0;
 }
 
