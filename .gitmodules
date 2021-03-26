@@ -5,6 +5,7 @@
 [submodule "IPZ_Project"]
 	path = IPZ_Project
 	url = https://github.com/lou000/IPZ_Project
+    branch = master
 [submodule "TDD_Calc"]
 	path = TDD_Calc
 	url = https://github.com/lou000/TDD_Calc
