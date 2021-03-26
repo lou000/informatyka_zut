@@ -58,7 +58,7 @@ Sudoku::~Sudoku()
 // This is a foreach type loop that iterates over column row and box coresponding
 // to cells constraints.
 // Takes a lambda that returns a bool, loop terminates when lambda evaluates to false.
-
+// It doesnt bring joy.
 void Sudoku::forEachCRB(uint8 cellNr, std::function<bool(uint8)> function) const
 {
     assert(cellNr < size && cellNr >= 0);
@@ -95,7 +95,7 @@ void Sudoku::forEachCRB(uint8 cellNr, std::function<bool(uint8)> function) const
         }
 }
 
-
+// Check if all constraints are met (unique in column, row and box)
 bool Sudoku::validateCell(uint8 cellNr) const
 {
     int number = grid[cellNr];
@@ -112,6 +112,7 @@ bool Sudoku::validateCell(uint8 cellNr) const
     return valid;
 }
 
+// Find number of other cells constraining this one
 uint8 Sudoku::getConstraintCount(uint8 cellNr) const
 {
     uint8 count = 0;
@@ -123,6 +124,7 @@ uint8 Sudoku::getConstraintCount(uint8 cellNr) const
     return count;
 }
 
+// Find numbers that satisfy constraints
 std::unordered_set<uint8> Sudoku::findPossibleSolutions(uint8 cellNr) const
 {
     std::unordered_set<uint8> solutions;
@@ -149,7 +151,6 @@ std::unique_ptr<graph_state> Sudoku::clone() const
     return std::make_unique<Sudoku>(n, board);
 }
 
-// From what I could gather from this unreadable mess of a codebase, this hash function is only here for unordered_map.
 size_t Sudoku::hash_code() const
 {
     size_t hash = 0;
@@ -179,9 +180,11 @@ std::vector<std::unique_ptr<graph_state> > Sudoku::get_successors() const
             }
         }
     }
+    // We didnt find any empty cells
     if(maxCell == -1)
         return std::vector<std::unique_ptr<graph_state>>();
 
+    // Create successor for every number that creates valid state in this cell
     auto solutions = findPossibleSolutions(maxCell);
     std::vector<std::unique_ptr<graph_state>> successors;
     for(auto sol : solutions)
@@ -300,14 +303,14 @@ double Sudoku::get_heuristic_grade() const
     double empty = 0;
 
     // Validate board
+    // C# script tells us to do this here...
     // We shouldnt have to do it on every cell, we can just validate initial state of the grid
     // and validate new addition when spawning children.
-    // This is awfuly inefficiant
 
 //    for(int i=1; i<=size; i++)
 //        validateCell(i);
 
-    //The validation has been moved to children spawning
+    // Validation has been moved to constructor and to findPossibleSolutions.
 
 
     //Calculate "heuristic"

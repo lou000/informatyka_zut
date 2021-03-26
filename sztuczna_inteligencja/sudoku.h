@@ -1,4 +1,5 @@
 #pragma once
+//#define SUDOKU_DEBUG
 #include "SIplusplus/graph_state.hpp"
 #include <iostream>
 #include <sstream>
@@ -6,7 +7,6 @@
 #include <cstring>
 #include <unordered_set>
 #include <functional>
-#define SUDOKU_DEBUG
 #ifndef SUDOKU_DEBUG
 #undef assert
 #define assert(x)
