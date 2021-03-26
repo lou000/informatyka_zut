@@ -1,52 +1,84 @@
 #include "sudoku.h"
 
-Sudoku::Sudoku(const uint8_t n, int *board)
-    :board(board), n(n), nn(n*n), gridSize(n*n*n*n)
+Sudoku::Sudoku(const uint8 n, uint8 *board)
+    :grid(board), n(n), nn(n*n), size(n*n*n*n)
 {
     assert(n != 0);
+#ifdef SUDOKU_DEBUG
+    for(int i=0; i<size; i++)
+    {
+        assert(validateCell(i));
+        if(grid[i] == 0)
+            count++;
+    }
+#endif
+
 }
 
-Sudoku::Sudoku(const uint8_t n, const char *str)
-    :n(n), nn(n*n), gridSize(n*n*n*n)
+uint8 Sudoku::at(uint8 cell) const
+{
+    return grid[cell];
+}
+
+void Sudoku::setCell(uint8 cell, uint8 value) const
+{
+    assert(value>0 && value<= nn);
+    grid[cell] = value;
+}
+
+Sudoku::Sudoku(const uint8 n, const char *str)
+    :n(n), nn(n*n), size(n*n*n*n)
 {
     assert(n != 0);
-    this->board = new int[gridSize];
+    this->grid = new uint8[size];
 
     int i = 0;
     //Well better make sure
-    assert(std::strlen(str) == gridSize);
+    assert(std::strlen(str) == size);
     while(str[i] != '\0')
     {
-        this->board[i] = str[i] - '0';
+        this->grid[i] = str[i] - '0';
         i++;
     }
+#ifdef SUDOKU_DEBUG
+    for(int i=0; i<size; i++)
+    {
+        assert(validateCell(i));
+        if(grid[i] == 0)
+            count++;
+    }
+#endif
 }
 
-
-bool Sudoku::validateCell(uint8_t cellNr) const
+Sudoku::~Sudoku()
 {
-    assert(cellNr - 1 < gridSize && cellNr - 1 >= 0);
-    int number = board[cellNr-1];
-    if(number == 0) return true;
-    int x = (cellNr-1) % nn;
-    int y = (cellNr-1) / nn;
+    delete [] grid;
+}
+
+// This is a foreach type loop that iterates over column row and box coresponding
+// to cells constraints.
+// Takes a lambda that returns a bool, loop terminates when lambda evaluates to false.
+
+void Sudoku::forEachCRB(uint8 cellNr, std::function<bool(uint8)> function) const
+{
+    assert(cellNr < size && cellNr >= 0);
+    int x = (cellNr) % nn;
+    int y = (cellNr) / nn;
 
     //Check row
     for(int i=0; i<nn; i++)
     {
         if(i == x) continue;
-        int cv = board[y*nn + i];
-        if(cv == number)
-            return false;
+        int cv = grid[y*nn + i];
+        if(!function(cv)) return;
     }
 
     //Check column
     for(int i=0; i<nn; i++)
     {
         if(i == y) continue;
-        int cv = board[i*nn + x];
-        if(cv == number)
-            return false;
+        int cv = grid[i*nn + x];
+        if(!function(cv)) return;
     }
 
     //Check square
@@ -58,37 +90,110 @@ bool Sudoku::validateCell(uint8_t cellNr) const
         for(int j=0; j<n; j++)
         {
             if(startX + j == x && startY + i == y) continue;
-            int cv = board[(startY+i)*nn + startX+j];
-            if(cv == number)
-                return false;
+            int cv = grid[(startY+i)*nn + startX+j];
+            if(!function(cv)) return;
         }
+}
 
-    return true;
+
+bool Sudoku::validateCell(uint8 cellNr) const
+{
+    int number = grid[cellNr];
+    if(number == 0) return true;
+    bool valid = true;
+    forEachCRB(cellNr, [&](uint8 v){
+        if(v == number)
+        {
+            valid = false;
+            return false;
+        }
+        return true;
+    });
+    return valid;
+}
+
+uint8 Sudoku::getConstraintCount(uint8 cellNr) const
+{
+    uint8 count = 0;
+    forEachCRB(cellNr, [&](uint8 v){
+        if(v!=0)
+            count++;
+        return true;
+    });
+    return count;
+}
+
+std::unordered_set<uint8> Sudoku::findPossibleSolutions(uint8 cellNr) const
+{
+    std::unordered_set<uint8> solutions;
+    for(int i=1; i<=nn; i++)
+        solutions.emplace(i);
+    forEachCRB(cellNr, [&](uint8 v){
+        if(v!=0)
+            solutions.erase(v);
+        return true;
+    });
+    return solutions;
+
+}
+
+bool Sudoku::compare(const graph_state &a, const graph_state &b)
+{
+    return a.get_h()<b.get_h();
 }
 
 std::unique_ptr<graph_state> Sudoku::clone() const
 {
-    int* board = new int[gridSize];
-    memcpy(board, this->board, sizeof(int)*gridSize);
-    return std::make_unique<Sudoku>(gridSize, board);
+    uint8* board = new uint8[size];
+    memcpy(board, this->grid, sizeof(uint8)*size);
+    return std::make_unique<Sudoku>(n, board);
 }
 
 // From what I could gather from this unreadable mess of a codebase, this hash function is only here for unordered_map.
 size_t Sudoku::hash_code() const
 {
     size_t hash = 0;
-    for(int i=0; i<gridSize; i++)
+    for(int i=0; i<size; i++)
     {
         // This hash function is shamelessly stolen from boost::hash_combine.
         // https://www.boost.org/doc/libs/1_35_0/doc/html/boost/hash_combine_id241013.html
-        hash ^= board[i] + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+        hash ^= grid[i] + 0x9e3779b9 + (hash << 6) + (hash >> 2);
     }
     return hash;
 }
 
 std::vector<std::unique_ptr<graph_state> > Sudoku::get_successors() const
 {
-    return std::vector<std::unique_ptr<graph_state>>();
+    //Find the field with highest number of constraints and spawn successors from there.
+    int maxConstr = 0;
+    int maxCell = -1;
+    for(int i=0; i<size; i++)
+    {
+        if(grid[i] == 0)
+        {
+            int constr = getConstraintCount(i);
+            if(constr > maxConstr)
+            {
+                maxConstr = constr;
+                maxCell = i;
+            }
+        }
+    }
+    if(maxCell == -1)
+        return std::vector<std::unique_ptr<graph_state>>();
+
+    auto solutions = findPossibleSolutions(maxCell);
+    std::vector<std::unique_ptr<graph_state>> successors;
+    for(auto sol : solutions)
+    {
+        uint8* newGrid = new uint8[size];
+        memcpy(newGrid, grid, size * sizeof(uint8));
+
+        auto child = std::make_unique<Sudoku>(n, newGrid);
+        child->setCell(maxCell, sol);
+        successors.push_back(std::move(child));
+    }
+    return successors;
 }
 
 //This right here expects the board to always be in valid state.
@@ -119,11 +224,11 @@ std::wstring Sudoku::to_string() const
     stream<<"\n";
 
     //Body of the table
-    for(int i=1; i<=gridSize; i++)
+    for(int i=1; i<=size; i++)
     {
 
         //Convert number to display . when 0 and letter if above 9
-        int num = board[i-1];
+        int num = grid[i-1];
         wchar_t disp;
         if(num > 9)
             disp = num - 10 + 'A';
@@ -141,7 +246,7 @@ std::wstring Sudoku::to_string() const
         if(i % nn == 0)  //if end of the row
             stream<<L"║\n";
 
-        if(i % nn == 0 && i<gridSize-nn+1) // stuff between rows but not at the end
+        if(i % nn == 0 && i<size-nn+1) // stuff between rows but not at the end
         {
             if(i % (nn*n) != 0)        // if end of the square vertical
             {
@@ -198,19 +303,23 @@ double Sudoku::get_heuristic_grade() const
     // We shouldnt have to do it on every cell, we can just validate initial state of the grid
     // and validate new addition when spawning children.
     // This is awfuly inefficiant
-    for(int i=1; i<=gridSize; i++)
-        validateCell(i);
+
+//    for(int i=1; i<=size; i++)
+//        validateCell(i);
+
+    //The validation has been moved to children spawning
 
 
     //Calculate "heuristic"
-    for(int i=0; i<gridSize; i++)
-        if(board[i]==0) empty++;
+    for(int i=0; i<size; i++)
+        if(grid[i]==0) empty++;
     return empty;
 }
 
 bool Sudoku::is_equal(const graph_state &s) const
 {
     const Sudoku* st = dynamic_cast<const Sudoku*>(&s);
-    assert(gridSize == st->gridSize);
-    return memcmp(board, st->board, gridSize * sizeof (int));
+    assert(size == st->size);
+    return memcmp(grid, st->grid, size * sizeof (uint8));
 }
+
