@@ -6,42 +6,42 @@
 #include <assert.h>
 #include <cstring>
 #include <unordered_set>
+#include <set>
 #include <functional>
 #ifndef SUDOKU_DEBUG
 #undef assert
 #define assert(x)
 #endif
 
-typedef uint8_t uint8;
+typedef uint16_t uint16;
+typedef uint16_t uint16 ;
 
 class Sudoku : public graph_state
 {
 public:
-    Sudoku(uint8 n, uint8* board);
-    Sudoku(uint8 n, const char* board);
+    Sudoku(uint16 n, uint16* board, uint16 count);
+    Sudoku(uint16 n, const char* board);
     ~Sudoku();
 
     Sudoku(const Sudoku&) = delete;
     Sudoku& operator=(Sudoku const&) = delete;
 
-    uint8 getSize(){return size;}
+    uint16 getSize(){return size;}
 
 private:
-    uint8* grid = nullptr;
-    const uint8 n = 0;
-    const uint8 nn = 0;
-    const uint8 size = 0;
-    void forEachCRB(uint8 cellNr, std::function<bool(uint8)> function) const;
-#ifdef SUDOKU_DEBUG
-    uint8 count = 0;
-#endif
+    uint16* grid = nullptr;
+    const uint16 n = 0;
+    const uint16 nn = 0;
+    const uint16 size = 0;
+    uint16 blankCount = 0;
+    void forEachCRB(uint16 cellNr, std::function<bool(uint16)> function) const;
 
 public:
-    uint8 at(uint8 cell) const;
-    void setCell(uint8 cell, uint8 value) const;
-    bool validateCell(uint8 cellNr) const;
-    uint8 getConstraintCount(uint8 cellNr) const;
-    std::unordered_set<uint8> findPossibleSolutions(uint8 cellNr) const;
+    uint16 at(uint16 cell) const;
+    void setCell(uint16 cell, uint16 value) const;
+    bool validateCell(uint16 cellNr) const;
+    uint16 getConstraintCount(uint16 cellNr) const;
+    std::unordered_set<uint16> findPossibleSolutions(uint16 cellNr) const;
     static bool compare(const graph_state& a, const graph_state& b);
 
     virtual std::unique_ptr<graph_state> clone() const override;
