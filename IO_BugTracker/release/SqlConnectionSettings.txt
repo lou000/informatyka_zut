@@ -1,0 +1,5 @@
+Driver={SQL Server};        // This will only work with ODBC compliant databases
+Server=192.168.1.128,1433;  // IP,Port
+Database=IO_Bugtracker;     // Database
+Uid=Lewy;                   // User
+Pwd=lol;                    // Pass

@@ -5,3 +5,12 @@
 [submodule "sztuczna_inteligencja/SIplusplus"]
 	path = sztuczna_inteligencja/SIplusplus
 	url = https://github.com/Szachista/SIplusplus.git
+[submodule "IO_BugTracker"]
+	path = IO_BugTracker
+	url = https://github.com/lou000/IO_BugTracker
+[submodule "IPZ_Project"]
+	path = IPZ_Project
+	url = https://github.com/lou000/IPZ_Project
+[submodule "TDD_Calc"]
+	path = TDD_Calc
+	url = https://github.com/lou000/TDD_Calc

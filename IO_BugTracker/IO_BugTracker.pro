@@ -2,7 +2,7 @@ QT += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++11
+CONFIG += c++17
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -19,6 +19,9 @@ SOURCES += \
     external/DarkStyle.cpp \
     external/framelesswindow/framelesswindow.cpp \
     external/framelesswindow/windowdragger.cpp \
+    external/hashing/hl_sha2ext.cpp \
+    external/hashing/hl_sha512wrapper.cpp \
+    src/actionwindows.cpp \
     src/bugview.cpp \
     src/issue.cpp \
     src/main.cpp \
@@ -33,7 +36,13 @@ HEADERS += \
     external/DarkStyle.h \
     external/framelesswindow/framelesswindow.h \
     external/framelesswindow/windowdragger.h \
+    external/hashing/hashlibpp.h \
+    external/hashing/hl_sha2ext.h \
+    external/hashing/hl_sha512wrapper.h \
+    external/hashing/hl_types.h \
+    src/actionwindows.h \
     src/bugview.h \
+    src/global.h \
     src/issue.h \
     src/mainwindow.h \
     src/project.h \

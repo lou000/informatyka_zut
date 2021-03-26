@@ -4,21 +4,27 @@
 #include <QScreen>
 #include <QApplication>
 #include "threadcontroller.h"
+#include "global.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    QFile file(QCoreApplication::applicationDirPath() + "/SqlConnectionSettings.txt");
+    importSqlConnectionString(file);
     a.setStyle(new DarkStyle);
-    FramelessWindow framelessWindow;
-    MainWindow* window = new MainWindow();
-    framelessWindow.setContent(window);
-    framelessWindow.setWindowTitle(window->windowTitle());
-    QFont font = QFont("Calibri", 10);
+    FramelessWindow* framelessWindow = new FramelessWindow();
+    MainWindow* window = new MainWindow(framelessWindow);
+    framelessWindow->setContent(window);
+    framelessWindow->setWindowTitle("BugTracker   -   Project IO   -   by Lewicki Maciej and Jakub Kościołowski");
+    QFont font = QFont("Calibri", 12);
     a.setFont(font);
-    QScreen* mainScreen = QApplication::screens().at(0);
-    int x = (mainScreen->size().width()-window->width()) / 2;
-    int y = (mainScreen->size().height()-window->height()) / 2;
-    framelessWindow.move(x, y);
-    framelessWindow.show();
+    QObject::connect(window, &MainWindow::move, framelessWindow, [=](int x, int y)
+    {
+        framelessWindow->move(x, y);
+    });
+    QObject::connect(window, &MainWindow::show, framelessWindow, [=]
+    {
+        framelessWindow->show();
+    });
     return a.exec();
 }
