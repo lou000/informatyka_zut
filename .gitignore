@@ -270,3 +270,9 @@ fabric.properties
 #linux executables have no fucking extension, well played
 lab03
 lab02
+
+#java
+.project
+.classpath
+*.eclipse.*
+*.meta
