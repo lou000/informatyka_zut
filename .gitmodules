@@ -2,9 +2,6 @@
 	path = TD_2020_34410
 	url = https://github.com/lou000/TD_2020_34410
 	branch = master
-[submodule "sztuczna_inteligencja/SIplusplus"]
-	path = sztuczna_inteligencja/SIplusplus
-	url = https://github.com/Szachista/SIplusplus.git
 [submodule "IPZ_Project"]
 	path = IPZ_Project
 	url = https://github.com/lou000/IPZ_Project
