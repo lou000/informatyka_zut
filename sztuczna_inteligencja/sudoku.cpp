@@ -1,4 +1,4 @@
-#include "sudoku.h"
+﻿#include "sudoku.h"
 
 Sudoku::Sudoku(const uint16 n, uint16 *board, uint16 blankCount)
     :grid(board), n(n), nn(n*n), size(n*n*n*n), blankCount(blankCount)
@@ -58,10 +58,10 @@ Sudoku::Sudoku(const uint16 n, const char *str)
         }
         i++;
     }
-#ifdef SUDOKU_DEBUG
+
+    //Check if sudoku imported from string is valid
     for(int i=0; i<size; i++)
         assert(validateCell(i));
-#endif
 
 }
 
@@ -128,13 +128,13 @@ bool Sudoku::validateCell(uint16 cellNr) const
 // Find number of other cells constraining this one
 uint16 Sudoku::getConstraintCount(uint16 cellNr) const
 {
-    uint16 count = 0;
+    std::unordered_set<uint16> constraints;
     forEachCRB(cellNr, [&](uint16 v){
         if(v!=0)
-            count++;
+            constraints.emplace(v);
         return true;
     });
-    return count;
+    return constraints.size();
 }
 
 // Find numbers that satisfy constraints
@@ -179,7 +179,7 @@ size_t Sudoku::hash_code() const
 std::vector<std::unique_ptr<graph_state> > Sudoku::get_successors() const
 {
     //Find the field with highest number of constraints and spawn successors from there.
-    int maxConstr = 0;
+    int maxConstr = -1;
     int maxCell = -1;
 
     for(int i=0; i<size; i++)
