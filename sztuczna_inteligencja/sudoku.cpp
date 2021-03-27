@@ -179,7 +179,7 @@ size_t Sudoku::hash_code() const
 std::vector<std::unique_ptr<graph_state> > Sudoku::get_successors() const
 {
     //Find the field with highest number of constraints and spawn successors from there.
-    int maxConstr = 0;
+    int maxConstr = -1;
     int maxCell = -1;
 
     for(int i=0; i<size; i++)
