@@ -58,10 +58,10 @@ Sudoku::Sudoku(const uint16 n, const char *str)
         }
         i++;
     }
-#ifdef SUDOKU_DEBUG
+
+    //Check if sudoku imported from string is valid
     for(int i=0; i<size; i++)
         assert(validateCell(i));
-#endif
 
 }
 
