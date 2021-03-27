@@ -128,13 +128,13 @@ bool Sudoku::validateCell(uint16 cellNr) const
 // Find number of other cells constraining this one
 uint16 Sudoku::getConstraintCount(uint16 cellNr) const
 {
-    uint16 count = 0;
+    std::unordered_set<uint16> constraints;
     forEachCRB(cellNr, [&](uint16 v){
         if(v!=0)
-            count++;
+            constraints.emplace(v);
         return true;
     });
-    return count;
+    return constraints.size();
 }
 
 // Find numbers that satisfy constraints
