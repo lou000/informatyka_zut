@@ -1,5 +1,6 @@
 ﻿#pragma once
 //#define SUDOKU_DEBUG
+
 #include "SIplusplus_wchar/graph_state.hpp"
 #include <iostream>
 #include <sstream>
@@ -8,10 +9,12 @@
 #include <unordered_set>
 #include <set>
 #include <functional>
+
 #ifndef SUDOKU_DEBUG
 #undef assert
 #define assert(x)
 #endif
+
 
 typedef uint8_t uint8;
 typedef uint16_t uint16 ;
@@ -19,8 +22,8 @@ typedef uint16_t uint16 ;
 class Sudoku : public graph_state
 {
 public:
-    Sudoku(uint16 n, uint16* board, uint16 count);
     Sudoku(uint16 n, const char* board);
+    Sudoku(uint16 n, uint16* board, uint16 count);
     ~Sudoku();
 
     Sudoku(const Sudoku&) = delete;

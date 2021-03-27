@@ -4,6 +4,7 @@ Sudoku::Sudoku(const uint16 n, uint16 *board, uint16 blankCount)
     :grid(board), n(n), nn(n*n), size(n*n*n*n), blankCount(blankCount)
 {
     assert(n != 0);
+    assert(board != nullptr);
 #ifdef SUDOKU_DEBUG
     for(int i=0; i<size; i++)
         assert(validateCell(i));
@@ -12,6 +13,7 @@ Sudoku::Sudoku(const uint16 n, uint16 *board, uint16 blankCount)
 
 uint16 Sudoku::at(uint16 cell) const
 {
+    assert(cell<size);
     return grid[cell];
 }
 
@@ -24,12 +26,13 @@ void Sudoku::setCell(uint16 cell, uint16 value) const
 Sudoku::Sudoku(const uint16 n, const char *str)
     :n(n), nn(n*n), size(n*n*n*n)
 {
+    //Well better make sure
     assert(n != 0);
-    this->grid = new uint16[size];
+    assert(std::strlen(str) == size);
+
+    grid = new uint16[size];
 
     int i = 0;
-    //Well better make sure
-    assert(std::strlen(str) == size);
     while(str[i] != '\0')
     {
         const auto sChar = str[i];
@@ -37,29 +40,27 @@ Sudoku::Sudoku(const uint16 n, const char *str)
         {
             if(sChar == '.')
             {
-                this->grid[i] = 0;
+                grid[i] = 0;
                 blankCount++;
             }
             else
             {
-                if(sChar<'9')
-                    this->grid[i] = (sChar - '0') + 1;
-                else if(sChar == '9')
-                    this->grid[i] = 10;
+                if(sChar<='9')
+                    grid[i] = (sChar - '0') + 1;
                 else
-                    this->grid[i] = (sChar - 'A') + 11;
+                    grid[i] = (sChar - 'A') + 11;
             }
         }
         else // 9x9 and smaller
         {
-            this->grid[i] = sChar - '0';
+            grid[i] = sChar - '0';
             if(sChar == '0')
                 blankCount++;
         }
         i++;
     }
 
-    //Check if sudoku imported from string is valid
+    // Check if sudoku is valid
     for(int i=0; i<size; i++)
         assert(validateCell(i));
 
@@ -80,7 +81,7 @@ void Sudoku::forEachCRB(uint16 cellNr, std::function<bool(uint16)> function) con
     int x = (cellNr) % nn;
     int y = (cellNr) / nn;
 
-    //Check row
+    // Loop row
     for(int i=0; i<nn; i++)
     {
         if(i == x) continue;
@@ -88,7 +89,7 @@ void Sudoku::forEachCRB(uint16 cellNr, std::function<bool(uint16)> function) con
         if(!function(cv)) return;
     }
 
-    //Check column
+    // Loop column
     for(int i=0; i<nn; i++)
     {
         if(i == y) continue;
@@ -96,7 +97,7 @@ void Sudoku::forEachCRB(uint16 cellNr, std::function<bool(uint16)> function) con
         if(!function(cv)) return;
     }
 
-    //Check square
+    // Loop square
     int startX = x-((x%n) - 1)-1;
     int startY = y-((y%n) - 1)-1;
     for(int i=0; i<n; i++)
@@ -128,10 +129,10 @@ bool Sudoku::validateCell(uint16 cellNr) const
 // Find number of other cells constraining this one
 uint16 Sudoku::getConstraintCount(uint16 cellNr) const
 {
-    std::unordered_set<uint16> constraints;
+    std::unordered_set<uint16> constraints; // this is just for uniqueness and its very slow
     forEachCRB(cellNr, [&](uint16 v){
         if(v!=0)
-            constraints.emplace(v);
+            constraints.insert(v);
         return true;
     });
     return constraints.size();
@@ -140,9 +141,11 @@ uint16 Sudoku::getConstraintCount(uint16 cellNr) const
 // Find numbers that satisfy constraints
 std::unordered_set<uint16>  Sudoku::findPossibleSolutions(uint16 cellNr) const
 {
+    // Start with all solutions and remove ones we encouner
     std::unordered_set<uint16> solutions;
     for(int i=1; i<=nn; i++)
         solutions.emplace(i);
+
     forEachCRB(cellNr, [&](uint16 v){
         if(v!=0)
             solutions.erase(v);
@@ -160,7 +163,7 @@ bool Sudoku::compare(const graph_state &a, const graph_state &b)
 std::unique_ptr<graph_state> Sudoku::clone() const
 {
     uint16* board = new uint16[size];
-    memcpy(board, this->grid, sizeof(uint16)*size);
+    memcpy(board, grid, sizeof(uint16)*size);
     return std::make_unique<Sudoku>(n, board, blankCount);
 }
 
@@ -178,10 +181,11 @@ size_t Sudoku::hash_code() const
 
 std::vector<std::unique_ptr<graph_state> > Sudoku::get_successors() const
 {
-    //Find the field with highest number of constraints and spawn successors from there.
+    // Find the field with highest number of constraints and spawn successors from there.
     int maxConstr = -1;
     int maxCell = -1;
 
+    // This loop is very slow, probably should cache this information.
     for(int i=0; i<size; i++)
     {
         if(grid[i] == 0)

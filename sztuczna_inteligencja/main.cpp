@@ -11,10 +11,10 @@ void testPuzzles(uint8 count, uint8 solutions, uint8 size, const char** array)
 {
     for(int i=0; i<count; i++)
     {
-        std::wcout<<"\n\n"<<"BOARD 9x9:\n";
+        std::wcout<<"\n\n"<<"SUDOKU "<<size*size<<"x"<<size*size<<":\n";
         Sudoku sud = Sudoku(size, array[i]);
-        std::wcout<<"String: "<<array[i]<<"\n";
-        std::wcout<<"Hash  : "<<sud.hash_code()<<"\n\n";
+//        std::wcout<<"String: "<<array[i]<<"\n";
+//        std::wcout<<"Hash  : "<<sud.hash_code()<<"\n\n";
         std::wcout<<sud.to_string();
 
         std::wcout<<"\n\n"<<"SOLUTION:\n";
@@ -30,17 +30,14 @@ void testPuzzles(uint8 count, uint8 solutions, uint8 size, const char** array)
         std::wcout<<"\n\n"<<"==============================================================================================================\n";
     }
 }
-
 int main()
 {
     setlocale(LC_ALL, "");
     _setmode(_fileno(stdout), _O_U16TEXT);
 
-
     testPuzzles(2, 2, 2, puzzle4x4);
     testPuzzles(2, 2, 3, puzzle9x9);
     testPuzzles(2, 2, 4, puzzle16x16);
-
 
     return 0;
 }
