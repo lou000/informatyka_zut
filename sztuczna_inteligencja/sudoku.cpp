@@ -1,4 +1,4 @@
-#include "sudoku.h"
+﻿#include "sudoku.h"
 
 Sudoku::Sudoku(const uint16 n, uint16 *board, uint16 blankCount)
     :grid(board), n(n), nn(n*n), size(n*n*n*n), blankCount(blankCount)

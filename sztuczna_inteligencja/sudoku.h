@@ -1,6 +1,6 @@
-#pragma once
+﻿#pragma once
 //#define SUDOKU_DEBUG
-#include "SIplusplus/graph_state.hpp"
+#include "SIplusplus_wchar/graph_state.hpp"
 #include <iostream>
 #include <sstream>
 #include <assert.h>

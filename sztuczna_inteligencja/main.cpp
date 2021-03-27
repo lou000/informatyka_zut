@@ -1,16 +1,16 @@
-#include <iostream>
+﻿#include <iostream>
 #include <sstream>
 #include <locale.h>
 #include <io.h>
 #include <fcntl.h>
-#include "SIplusplus/graph_search.hpp"
+#include "SIplusplus_wchar/graph_search.hpp"
 #include "sudoku.h"
 #include "puzzles.h"
 
 int main()
 {
+    setlocale(LC_ALL, "");
     _setmode(_fileno(stdout), _O_U16TEXT);
-
 
 
     for(int i=0; i<5; i++)

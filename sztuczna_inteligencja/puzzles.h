@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 const char* puzzle16x16[] = {
     "..4F...6.7.C.D.......E..98...C..7CB....D2....39A.......CE.3B.F0."
