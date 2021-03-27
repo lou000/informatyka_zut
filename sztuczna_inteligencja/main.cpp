@@ -32,6 +32,7 @@ void testPuzzles(uint8 count, uint8 solutions, uint8 size, const char** array)
 }
 int main()
 {
+    //The files have to be formated in UNIX style to print correctly
     setlocale(LC_ALL, "");
     _setmode(_fileno(stdout), _O_U16TEXT);
 
