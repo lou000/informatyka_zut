@@ -13,7 +13,7 @@
 #define assert(x)
 #endif
 
-typedef uint16_t uint16;
+typedef uint8_t uint8;
 typedef uint16_t uint16 ;
 
 class Sudoku : public graph_state
