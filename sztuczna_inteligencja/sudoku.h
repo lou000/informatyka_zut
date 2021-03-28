@@ -30,8 +30,12 @@ class Sudoku : public graph_state
     };
 
 public:
-    Sudoku(uint16 n, const char* grid);
-    Sudoku(const uint16 n, Cell* grid, std::unordered_set<uint16> emptyIndexes);
+    enum Heuristic{
+        NumberOfUnknowns, SumOfRemainingSolutions
+    };
+    Sudoku(uint16 n, const char* grid, Heuristic heuristic = NumberOfUnknowns);
+    Sudoku(const uint16 n, Cell* grid, std::unordered_set<uint16> emptyIndexes,
+           Heuristic heuristic);
     ~Sudoku();
 
     Sudoku(const Sudoku&) = delete;
@@ -46,6 +50,7 @@ private:
     const uint16 n = 0;
     const uint16 nn = 0;
     const uint16 size = 0;
+    const Heuristic heuristic = NumberOfUnknowns;
 
     void setupGridInfo();
     bool validateCell(uint16 cellNr) const;

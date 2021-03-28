@@ -1,7 +1,8 @@
 ﻿#include "sudoku.h"
 
-Sudoku::Sudoku(const uint16 n, Cell* grid, std::unordered_set<uint16> emptyIndexes)
-    :grid(grid), emptyIndexes(emptyIndexes), n(n), nn(n*n), size(n*n*n*n)
+Sudoku::Sudoku(const uint16 n, Cell* grid, std::unordered_set<uint16> emptyIndexes,
+               Heuristic heuristic)
+    :grid(grid), emptyIndexes(emptyIndexes), n(n), nn(n*n), size(n*n*n*n), heuristic(heuristic)
 {
     assert(n != 0);
     assert(grid != nullptr);
@@ -11,8 +12,8 @@ Sudoku::Sudoku(const uint16 n, Cell* grid, std::unordered_set<uint16> emptyIndex
 #endif
 }
 
-Sudoku::Sudoku(const uint16 n, const char *str)
-    :n(n), nn(n*n), size(n*n*n*n)
+Sudoku::Sudoku(const uint16 n, const char *str, Heuristic heuristic)
+    :n(n), nn(n*n), size(n*n*n*n), heuristic(heuristic)
 {
     //Well better make sure
     assert(n != 0 && n<8);  //cant have more than
@@ -177,7 +178,7 @@ std::unique_ptr<graph_state> Sudoku::clone() const
 {
     Cell* newGrid = new Cell[size];
     memcpy(newGrid, grid, sizeof(Cell)*size);
-    return std::make_unique<Sudoku>(n, newGrid, emptyIndexes);
+    return std::make_unique<Sudoku>(n, newGrid, emptyIndexes, heuristic);
 }
 
 size_t Sudoku::hash_code() const
@@ -219,8 +220,9 @@ std::vector<std::unique_ptr<graph_state> > Sudoku::get_successors() const
         {
             Cell* newGrid = new Cell[size];
             memcpy(newGrid, grid, size * sizeof(Cell));
-            auto child = std::make_unique<Sudoku>(n, newGrid, emptyIndexes);
+            auto child = std::make_unique<Sudoku>(n, newGrid, emptyIndexes, heuristic);
             child->setCell(maxIndex, sol);
+            child->update_score(0);
 //            std::wcout<<child->to_string()<<"\n";
             successors.push_back(std::move(child));
         }
@@ -337,19 +339,20 @@ std::wstring Sudoku::to_string() const
 
 double Sudoku::get_heuristic_grade() const
 {
-    // Validate board
-    // C# script tells us to do this here...
-    // We shouldnt have to do it on every cell, we can just validate initial state of the grid
-    // and validate new addition when spawning children.
-
-//    for(int i=1; i<=size; i++)
-//        validateCell(i);
-
-    // Validation has been moved to constructor and to findPossibleSolutions.
-
-
     //Calculate "heuristic"
-    return emptyIndexes.size();
+    switch (heuristic) {
+    case NumberOfUnknowns:
+        return  emptyIndexes.size();
+    case SumOfRemainingSolutions:
+    {
+        int sum = 0;
+        for(auto indx : emptyIndexes)
+        {
+            sum += nn - grid[indx].constraintCount;
+        }
+        return sum;
+    }
+    }
 }
 
 bool Sudoku::is_equal(const graph_state &s) const
