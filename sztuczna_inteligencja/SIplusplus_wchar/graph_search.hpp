@@ -2,7 +2,6 @@
 #define GRAPH_SEARCH_HPP
 
 #include "graph_state.hpp"
-#include "../Profile/Instrumentor.h"
 #include "queue.hpp"
 #include <vector>
 #include <memory>

@@ -131,7 +131,6 @@ informative_searcher::informative_searcher(const graph_state &initial,
                                            std::size_t max_solutions)
     : open {comp}
 {
-    PROFILE_FUNCTION();
     start_time = std::chrono::high_resolution_clock::now();
     if (max_solutions == 0)
     {

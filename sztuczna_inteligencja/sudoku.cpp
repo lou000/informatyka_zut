@@ -3,7 +3,6 @@
 Sudoku::Sudoku(const uint16 n, Cell* grid, std::unordered_set<uint16> emptyIndexes)
     :grid(grid), emptyIndexes(emptyIndexes), n(n), nn(n*n), size(n*n*n*n)
 {
-    PROFILE_FUNCTION();
     assert(n != 0);
     assert(grid != nullptr);
 #ifdef SUDOKU_DEBUG
@@ -15,7 +14,6 @@ Sudoku::Sudoku(const uint16 n, Cell* grid, std::unordered_set<uint16> emptyIndex
 Sudoku::Sudoku(const uint16 n, const char *str)
     :n(n), nn(n*n), size(n*n*n*n)
 {
-    PROFILE_FUNCTION();
     //Well better make sure
     assert(n != 0 && n<8);  //cant have more than
     assert(std::strlen(str) == size);
@@ -79,7 +77,6 @@ void Sudoku::setCell(uint16 cell, uint16 value) const
 // It doesnt bring joy.
 void Sudoku::forEachCRB(uint16 cellNr, std::function<bool(Cell*)> function) const
 {
-    PROFILE_FUNCTION();
     assert(cellNr < size && cellNr >= 0);
     int x = (cellNr) % nn;
     int y = (cellNr) / nn;
@@ -115,7 +112,6 @@ void Sudoku::forEachCRB(uint16 cellNr, std::function<bool(Cell*)> function) cons
 // Check if all constraints are met (unique in column, row and box)
 bool Sudoku::validateCell(uint16 cellNr) const
 {
-    PROFILE_FUNCTION();
     int cc = grid[cellNr].constraintCount;
     if(cc > nn-1)
         return false;
@@ -133,10 +129,10 @@ bool Sudoku::validateCell(uint16 cellNr) const
     return valid;
 }
 
-// Find number of other cells constraining this one.
+// Find number of other cells constraining this one and get available solutions
+// this function is called only in constructor
 void Sudoku::setConstraintsAndSolutions(uint16 cellNr) const
 {
-    PROFILE_FUNCTION();
     // Start with all solutions and remove ones we encounter.
     Cell* cell = &grid[cellNr];
     for(int i=1; i<=nn; i++)
@@ -155,6 +151,8 @@ void Sudoku::setConstraintsAndSolutions(uint16 cellNr) const
 
 }
 
+// After each time we set a cell, we have to update every cell in corresponding row,
+// column and box. (if this is new constraint, remove solution and ++ constraint count)
 void Sudoku::updateConstraintsAndSolutions(uint16 cellNr) const
 {
     Cell* cell = &grid[cellNr];
@@ -177,7 +175,6 @@ bool Sudoku::compare(const graph_state &a, const graph_state &b)
 
 std::unique_ptr<graph_state> Sudoku::clone() const
 {
-    PROFILE_FUNCTION();
     Cell* newGrid = new Cell[size];
     memcpy(newGrid, grid, sizeof(Cell)*size);
     return std::make_unique<Sudoku>(n, newGrid, emptyIndexes);
@@ -185,7 +182,6 @@ std::unique_ptr<graph_state> Sudoku::clone() const
 
 size_t Sudoku::hash_code() const
 {
-    PROFILE_FUNCTION();
     size_t hash = 0;
     for(int i=0; i<size; i++)
     {
@@ -198,7 +194,6 @@ size_t Sudoku::hash_code() const
 
 std::vector<std::unique_ptr<graph_state> > Sudoku::get_successors() const
 {
-    PROFILE_FUNCTION();
     // We didnt find any empty cells
     if(emptyIndexes.size() == 0)
         return std::vector<std::unique_ptr<graph_state>>();
@@ -242,7 +237,6 @@ bool Sudoku::is_solution() const
 //In an effort to make this look pretty I've made it extremely complicated. Also requires wstream.
 std::wstring Sudoku::to_string() const
 {
-    PROFILE_FUNCTION();
     std::wstringstream stream;
 
     //Top of the table
@@ -360,7 +354,6 @@ double Sudoku::get_heuristic_grade() const
 
 bool Sudoku::is_equal(const graph_state &s) const
 {
-    PROFILE_FUNCTION();
     const Sudoku* st = dynamic_cast<const Sudoku*>(&s);
     assert(size == st->size);
     int eq = memcmp(grid, st->grid, size * sizeof (Cell)); //wow who knew memcmp = 0 if equal

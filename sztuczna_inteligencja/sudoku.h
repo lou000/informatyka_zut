@@ -2,7 +2,6 @@
 //#define SUDOKU_DEBUG
 
 #include "SIplusplus_wchar/graph_state.hpp"
-#include "Profile/Instrumentor.h"
 #include <iostream>
 #include <sstream>
 #include <assert.h>
@@ -20,9 +19,10 @@
 typedef uint8_t uint8;
 typedef uint16_t uint16 ;
 
+// This version is optimized by caching solutions and constraint count
+// its about 10x faster at the cost of 2x the memory.
 class Sudoku : public graph_state
 {
-
     struct Cell{
         uint16 value = 0;
         uint16 constraintCount = 0;
