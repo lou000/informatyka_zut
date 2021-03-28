@@ -1,36 +1,26 @@
 ﻿#include "sudoku.h"
 
-Sudoku::Sudoku(const uint16 n, uint16 *board, uint16 blankCount)
-    :grid(board), n(n), nn(n*n), size(n*n*n*n), blankCount(blankCount)
+Sudoku::Sudoku(const uint16 n, Cell* grid, std::unordered_set<uint16> emptyIndexes)
+    :grid(grid), emptyIndexes(emptyIndexes), n(n), nn(n*n), size(n*n*n*n)
 {
+    PROFILE_FUNCTION();
     assert(n != 0);
-    assert(board != nullptr);
+    assert(grid != nullptr);
 #ifdef SUDOKU_DEBUG
     for(int i=0; i<size; i++)
         assert(validateCell(i));
 #endif
 }
 
-uint16 Sudoku::at(uint16 cell) const
-{
-    assert(cell<size);
-    return grid[cell];
-}
-
-void Sudoku::setCell(uint16 cell, uint16 value) const
-{
-    assert(value>0 && value<= nn);
-    grid[cell] = value;
-}
-
 Sudoku::Sudoku(const uint16 n, const char *str)
     :n(n), nn(n*n), size(n*n*n*n)
 {
+    PROFILE_FUNCTION();
     //Well better make sure
-    assert(n != 0);
+    assert(n != 0 && n<8);  //cant have more than
     assert(std::strlen(str) == size);
 
-    grid = new uint16[size];
+    grid = new Cell[size];
 
     int i = 0;
     while(str[i] != '\0')
@@ -39,31 +29,22 @@ Sudoku::Sudoku(const uint16 n, const char *str)
         if(n == 4)  // in 16x16 '0' is used in solution so move everything by 1
         {
             if(sChar == '.')
-            {
-                grid[i] = 0;
-                blankCount++;
-            }
+                grid[i].value = 0;
             else
             {
                 if(sChar<='9')
-                    grid[i] = (sChar - '0') + 1;
+                    grid[i].value = (sChar - '0') + 1;
                 else
-                    grid[i] = (sChar - 'A') + 11;
+                    grid[i].value = (sChar - 'A') + 11;
             }
         }
         else // 9x9 and smaller
         {
-            grid[i] = sChar - '0';
-            if(sChar == '0')
-                blankCount++;
+            grid[i].value = sChar - '0';
         }
         i++;
     }
-
-    // Check if sudoku is valid
-    for(int i=0; i<size; i++)
-        assert(validateCell(i));
-
+    setupGridInfo();
 }
 
 Sudoku::~Sudoku()
@@ -71,12 +52,34 @@ Sudoku::~Sudoku()
     delete [] grid;
 }
 
+void Sudoku::setupGridInfo()
+{
+    for(int i=0; i<size; i++)
+    {
+        if(grid[i].value == 0)
+        {
+            setConstraintsAndSolutions(i);
+            emptyIndexes.insert(i);
+        }
+        assert(validateCell(i));
+    }
+}
+
+void Sudoku::setCell(uint16 cell, uint16 value) const
+{
+    assert(value>0 && value<= nn);
+    grid[cell].value = value;
+    updateConstraintsAndSolutions(cell);
+    emptyIndexes.erase(cell);
+}
+
 // This is a foreach type loop that iterates over column row and box coresponding
 // to cells constraints.
 // Takes a lambda that returns a bool, loop terminates when lambda evaluates to false.
 // It doesnt bring joy.
-void Sudoku::forEachCRB(uint16 cellNr, std::function<bool(uint16)> function) const
+void Sudoku::forEachCRB(uint16 cellNr, std::function<bool(Cell*)> function) const
 {
+    PROFILE_FUNCTION();
     assert(cellNr < size && cellNr >= 0);
     int x = (cellNr) % nn;
     int y = (cellNr) / nn;
@@ -85,16 +88,16 @@ void Sudoku::forEachCRB(uint16 cellNr, std::function<bool(uint16)> function) con
     for(int i=0; i<nn; i++)
     {
         if(i == x) continue;
-        int cv = grid[y*nn + i];
-        if(!function(cv)) return;
+        Cell* cc = &grid[y*nn + i];
+        if(!function(cc)) return;
     }
 
     // Loop column
     for(int i=0; i<nn; i++)
     {
         if(i == y) continue;
-        int cv = grid[i*nn + x];
-        if(!function(cv)) return;
+        Cell* cc = &grid[i*nn + x];
+        if(!function(cc)) return;
     }
 
     // Loop square
@@ -104,19 +107,23 @@ void Sudoku::forEachCRB(uint16 cellNr, std::function<bool(uint16)> function) con
         for(int j=0; j<n; j++)
         {
             if(startX + j == x && startY + i == y) continue;
-            int cv = grid[(startY+i)*nn + startX+j];
-            if(!function(cv)) return;
+            Cell* cc = &grid[(startY+i)*nn + startX+j];
+            if(!function(cc)) return;
         }
 }
 
 // Check if all constraints are met (unique in column, row and box)
 bool Sudoku::validateCell(uint16 cellNr) const
 {
-    int number = grid[cellNr];
+    PROFILE_FUNCTION();
+    int cc = grid[cellNr].constraintCount;
+    if(cc > nn-1)
+        return false;
+    int number = grid[cellNr].value;
     if(number == 0) return true;
     bool valid = true;
-    forEachCRB(cellNr, [&](uint16 v){
-        if(v == number)
+    forEachCRB(cellNr, [&](Cell* v){
+        if(v->value == number)
         {
             valid = false;
             return false;
@@ -126,33 +133,41 @@ bool Sudoku::validateCell(uint16 cellNr) const
     return valid;
 }
 
-// Find number of other cells constraining this one
-uint16 Sudoku::getConstraintCount(uint16 cellNr) const
+// Find number of other cells constraining this one.
+void Sudoku::setConstraintsAndSolutions(uint16 cellNr) const
 {
-    std::unordered_set<uint16> constraints; // this is just for uniqueness and its very slow
-    forEachCRB(cellNr, [&](uint16 v){
-        if(v!=0)
-            constraints.insert(v);
+    PROFILE_FUNCTION();
+    // Start with all solutions and remove ones we encounter.
+    Cell* cell = &grid[cellNr];
+    for(int i=1; i<=nn; i++)
+        cell->solutions[i-1] = i;
+
+    forEachCRB(cellNr, [&](Cell* v){
+        if(v->value!=0)
+        {
+            cell->solutions[v->value-1] = 0;
+        }
         return true;
     });
-    return constraints.size();
+    for(int i=0; i<nn; i++)
+        if(cell->solutions[i] == 0)
+            cell->constraintCount++;
+
 }
 
-// Find numbers that satisfy constraints
-std::unordered_set<uint16>  Sudoku::findPossibleSolutions(uint16 cellNr) const
+void Sudoku::updateConstraintsAndSolutions(uint16 cellNr) const
 {
-    // Start with all solutions and remove ones we encouner
-    std::unordered_set<uint16> solutions;
-    for(int i=1; i<=nn; i++)
-        solutions.emplace(i);
+    Cell* cell = &grid[cellNr];
 
-    forEachCRB(cellNr, [&](uint16 v){
-        if(v!=0)
-            solutions.erase(v);
+    forEachCRB(cellNr, [&](Cell* v){
+        if(v->value == 0)
+        {
+            if(v->solutions[cell->value-1]!=0)
+                v->constraintCount++;
+            v->solutions[cell->value-1] = 0;
+        }
         return true;
     });
-    return solutions;
-
 }
 
 bool Sudoku::compare(const graph_state &a, const graph_state &b)
@@ -162,57 +177,58 @@ bool Sudoku::compare(const graph_state &a, const graph_state &b)
 
 std::unique_ptr<graph_state> Sudoku::clone() const
 {
-    uint16* board = new uint16[size];
-    memcpy(board, grid, sizeof(uint16)*size);
-    return std::make_unique<Sudoku>(n, board, blankCount);
+    PROFILE_FUNCTION();
+    Cell* newGrid = new Cell[size];
+    memcpy(newGrid, grid, sizeof(Cell)*size);
+    return std::make_unique<Sudoku>(n, newGrid, emptyIndexes);
 }
 
 size_t Sudoku::hash_code() const
 {
+    PROFILE_FUNCTION();
     size_t hash = 0;
     for(int i=0; i<size; i++)
     {
         // This hash function is shamelessly stolen from boost::hash_combine.
         // https://www.boost.org/doc/libs/1_35_0/doc/html/boost/hash_combine_id241013.html
-        hash ^= grid[i] + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+        hash ^= grid[i].value + 0x9e3779b9 + (hash << 6) + (hash >> 2);
     }
     return hash;
 }
 
 std::vector<std::unique_ptr<graph_state> > Sudoku::get_successors() const
 {
-    // Find the field with highest number of constraints and spawn successors from there.
-    int maxConstr = -1;
-    int maxCell = -1;
-
-    // This loop is very slow, probably should cache this information.
-    for(int i=0; i<size; i++)
-    {
-        if(grid[i] == 0)
-        {
-            int constr = getConstraintCount(i);
-            if(constr > maxConstr)
-            {
-                maxConstr = constr;
-                maxCell = i;
-            }
-        }
-    }
+    PROFILE_FUNCTION();
     // We didnt find any empty cells
-    if(maxCell == -1)
+    if(emptyIndexes.size() == 0)
         return std::vector<std::unique_ptr<graph_state>>();
 
-    // Create successor for every number that creates valid state in this cell
-    auto solutions = findPossibleSolutions(maxCell);
-    std::vector<std::unique_ptr<graph_state>> successors;
-    for(auto sol : solutions)
+    int maxConstraints = -1;
+    int maxIndex = -1;
+    for(auto index : emptyIndexes)
     {
-        uint16* newGrid = new uint16[size];
-        memcpy(newGrid, grid, size * sizeof(uint16));
-
-        auto child = std::make_unique<Sudoku>(n, newGrid, blankCount-1);
-        child->setCell(maxCell, sol);
-        successors.push_back(std::move(child));
+        int cnt = grid[index].constraintCount;
+        if(cnt>maxConstraints)
+        {
+            maxIndex = index;
+            maxConstraints = cnt;
+        }
+    }
+    // Create successor for every number that creates valid state in this cell
+    auto maxCell = grid[maxIndex];
+    std::vector<std::unique_ptr<graph_state>> successors;
+    for(int i=0; i<nn; i++)
+    {
+        uint16 sol = maxCell.solutions[i];
+        if(sol)
+        {
+            Cell* newGrid = new Cell[size];
+            memcpy(newGrid, grid, size * sizeof(Cell));
+            auto child = std::make_unique<Sudoku>(n, newGrid, emptyIndexes);
+            child->setCell(maxIndex, sol);
+//            std::wcout<<child->to_string()<<"\n";
+            successors.push_back(std::move(child));
+        }
     }
     return successors;
 }
@@ -220,12 +236,13 @@ std::vector<std::unique_ptr<graph_state> > Sudoku::get_successors() const
 //This right here expects the board to always be in valid state.
 bool Sudoku::is_solution() const
 {
-    return blankCount == 0;
+    return emptyIndexes.size() == 0;
 }
 
 //In an effort to make this look pretty I've made it extremely complicated. Also requires wstream.
 std::wstring Sudoku::to_string() const
 {
+    PROFILE_FUNCTION();
     std::wstringstream stream;
 
     //Top of the table
@@ -249,7 +266,7 @@ std::wstring Sudoku::to_string() const
     {
 
         //Convert number to display . when 0 and letter if above 9
-        int num = grid[i-1];
+        int num = grid[i-1].value;
         wchar_t disp;
         if(num > 9)
             disp = num - 10 + 'A';
@@ -338,14 +355,15 @@ double Sudoku::get_heuristic_grade() const
 
 
     //Calculate "heuristic"
-    return blankCount;
+    return emptyIndexes.size();
 }
 
 bool Sudoku::is_equal(const graph_state &s) const
 {
+    PROFILE_FUNCTION();
     const Sudoku* st = dynamic_cast<const Sudoku*>(&s);
     assert(size == st->size);
-    int eq = memcmp(grid, st->grid, size * sizeof (uint16)); //wow who knew memcmp = 0 if equal
+    int eq = memcmp(grid, st->grid, size * sizeof (Cell)); //wow who knew memcmp = 0 if equal
     return eq == 0;
 }
 

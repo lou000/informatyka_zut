@@ -2,6 +2,7 @@
 //#define SUDOKU_DEBUG
 
 #include "SIplusplus_wchar/graph_state.hpp"
+#include "Profile/Instrumentor.h"
 #include <iostream>
 #include <sstream>
 #include <assert.h>
@@ -21,9 +22,16 @@ typedef uint16_t uint16 ;
 
 class Sudoku : public graph_state
 {
+
+    struct Cell{
+        uint16 value = 0;
+        uint16 constraintCount = 0;
+        uint16 solutions[64] = {};   //this makes it so we can have max 64x64 grids
+    };
+
 public:
-    Sudoku(uint16 n, const char* board);
-    Sudoku(uint16 n, uint16* board, uint16 count);
+    Sudoku(uint16 n, const char* grid);
+    Sudoku(const uint16 n, Cell* grid, std::unordered_set<uint16> emptyIndexes);
     ~Sudoku();
 
     Sudoku(const Sudoku&) = delete;
@@ -32,19 +40,21 @@ public:
     uint16 getSize(){return size;}
 
 private:
-    uint16* grid = nullptr;
+    mutable Cell* grid = nullptr;
+    mutable std::unordered_set<uint16> emptyIndexes;
+
     const uint16 n = 0;
     const uint16 nn = 0;
     const uint16 size = 0;
-    uint16 blankCount = 0;
-    void forEachCRB(uint16 cellNr, std::function<bool(uint16)> function) const;
+
+    void setupGridInfo();
+    bool validateCell(uint16 cellNr) const;
+    void setCell(uint16 cell, uint16 value) const;
+    void setConstraintsAndSolutions(uint16 cellNr) const;
+    void updateConstraintsAndSolutions(uint16 cellNr) const;
+    void forEachCRB(uint16 cellNr, std::function<bool(Cell*)> function) const;
 
 public:
-    uint16 at(uint16 cell) const;
-    void setCell(uint16 cell, uint16 value) const;
-    bool validateCell(uint16 cellNr) const;
-    uint16 getConstraintCount(uint16 cellNr) const;
-    std::unordered_set<uint16> findPossibleSolutions(uint16 cellNr) const;
     static bool compare(const graph_state& a, const graph_state& b);
 
     virtual std::unique_ptr<graph_state> clone() const override;
