@@ -62,14 +62,14 @@ private:
 public:
     static bool compare(const graph_state& a, const graph_state& b);
 
-    virtual std::unique_ptr<graph_state> clone() const override;
-    virtual size_t hash_code() const override;
-    virtual std::vector<std::unique_ptr<graph_state>> get_successors() const override;
-    virtual bool is_solution() const override;
-    virtual std::wstring to_string() const override;
+    std::unique_ptr<graph_state> clone() const override;
+    size_t hash_code() const override;
+    std::vector<std::unique_ptr<graph_state>> get_successors() const override;
+    bool is_solution() const override;
+    std::wstring to_string() const override;
 
 protected:
-    virtual double get_heuristic_grade() const override;
-    virtual bool is_equal(const graph_state &s) const override;
+    double get_heuristic_grade() const override;
+    bool is_equal(const graph_state &s) const override;
 };
 

@@ -52,7 +52,7 @@ void testHeuristics(uint8 count, uint8 solutions, uint8 size, const char** array
 }
 int main()
 {
-    //The files have to be formated in UNIX style to print correctly
+    //The source files have to be formated in UNIX style to print correctly
     setlocale(LC_ALL, "");
     _setmode(_fileno(stdout), _O_U16TEXT);
 
@@ -60,9 +60,9 @@ int main()
     testPuzzles(8, 1, 3, puzzle9x9);
     testPuzzles(4, 1, 4, puzzle16x16);
 
-    testHeuristics(4, 1, 2, puzzle4x4);
-    testHeuristics(8, 1, 3, puzzle9x9);
-    testHeuristics(4, 1, 4, puzzle16x16);
+//    testHeuristics(4, 1, 2, puzzle4x4);
+//    testHeuristics(1, 1, 3, puzzle9x9);
+//    testHeuristics(4, 1, 4, puzzle16x16);
 
 //    int repeats = 50;
 //    for(int i=1; i<=repeats; i++)
