@@ -4,11 +4,11 @@ Sudoku::Sudoku(const uint16 n, Cell* grid, std::unordered_set<uint16> emptyIndex
                Heuristic heuristic)
     :grid(grid), emptyIndexes(emptyIndexes), n(n), nn(n*n), size(n*n*n*n), heuristic(heuristic)
 {
-    assert(n != 0);
-    assert(grid != nullptr);
+    ASSERT(n != 0);
+    ASSERT(grid != nullptr);
 #ifdef SUDOKU_DEBUG
     for(int i=0; i<size; i++)
-        assert(validateCell(i));
+        ASSERT(validateCell(i));
 #endif
 }
 
@@ -16,8 +16,8 @@ Sudoku::Sudoku(const uint16 n, const char *str, Heuristic heuristic)
     :n(n), nn(n*n), size(n*n*n*n), heuristic(heuristic)
 {
     //Well better make sure
-    assert(n != 0 && n<8);  //cant have more than
-    assert(std::strlen(str) == size);
+    ASSERT(n != 0 && n<8);  //cant have more than
+    ASSERT(std::strlen(str) == size);
 
     grid = new Cell[size];
 
@@ -60,13 +60,13 @@ void Sudoku::setupGridInfo()
             setConstraintsAndSolutions(i);
             emptyIndexes.insert(i);
         }
-        assert(validateCell(i));
+        ASSERT(validateCell(i));
     }
 }
 
 void Sudoku::setCell(uint16 cell, uint16 value) const
 {
-    assert(value>0 && value<= nn);
+    ASSERT(value>0 && value<= nn);
     grid[cell].value = value;
     updateConstraintsAndSolutions(cell);
     emptyIndexes.erase(cell);
@@ -78,7 +78,7 @@ void Sudoku::setCell(uint16 cell, uint16 value) const
 // It doesnt bring joy.
 void Sudoku::forEachCRB(uint16 cellNr, std::function<bool(Cell*)> function) const
 {
-    assert(cellNr < size && cellNr >= 0);
+    ASSERT(cellNr < size && cellNr >= 0);
     int x = (cellNr) % nn;
     int y = (cellNr) / nn;
 
@@ -358,7 +358,7 @@ double Sudoku::get_heuristic_grade() const
 bool Sudoku::is_equal(const graph_state &s) const
 {
     const Sudoku* st = dynamic_cast<const Sudoku*>(&s);
-    assert(size == st->size);
+    ASSERT(size == st->size);
     int eq = memcmp(grid, st->grid, size * sizeof (Cell)); //wow who knew memcmp = 0 if equal
     return eq == 0;
 }

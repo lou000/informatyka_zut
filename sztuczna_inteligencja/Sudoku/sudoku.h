@@ -1,19 +1,22 @@
 ﻿#pragma once
-//#define SUDOKU_DEBUG
+#define SUDOKU_DEBUG
 
-#include "SIplusplus_wchar/graph_state.hpp"
+#ifdef SUDOKU_DEBUG
+#define PPK_ASSERT_ENABLED 1
+#else
+#define PPK_ASSERT_ENABLED 0
+#endif
+
 #include <iostream>
 #include <sstream>
-#include <assert.h>
 #include <cstring>
 #include <unordered_set>
 #include <set>
 #include <functional>
+#include "graph_state.hpp"
+#include "l_assert.h"
 
-#ifndef SUDOKU_DEBUG
-#undef assert
-#define assert(x)
-#endif
+
 
 
 typedef uint8_t uint8;

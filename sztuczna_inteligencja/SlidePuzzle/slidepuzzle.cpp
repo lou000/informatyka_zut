@@ -12,7 +12,22 @@ SlidePuzzle::SlidePuzzle(uint16 n, uint16 *grid, SlidePuzzle::Heuristic heuristi
 
 }
 
-bool SlidePuzzle::validateGrid()
+bool SlidePuzzle::swapCells(uint16 indx1, uint16 indx2)
+{
+    auto& cell1 = grid[indx1];
+    auto& cell2 = grid[indx2];
+
+
+}
+
+void SlidePuzzle::createGrid()
+{
+    for(int i=1; i<size-1; i++)
+        grid[i] = i;
+    grid[size-1] = 0;
+}
+
+void SlidePuzzle::shuffleGrid()
 {
 
 }

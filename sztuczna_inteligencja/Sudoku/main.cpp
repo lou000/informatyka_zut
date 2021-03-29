@@ -3,9 +3,9 @@
 #include <locale.h>
 #include <io.h>
 #include <fcntl.h>
-#include "SIplusplus_wchar/graph_search.hpp"
 #include "sudoku.h"
 #include "puzzles.h"
+#include "graph_search.hpp"
 
 void testPuzzles(uint8 count, uint8 solutions, uint8 size, const char** array,
                  Sudoku::Heuristic h = Sudoku::NumberOfUnknowns)

@@ -1,5 +1,18 @@
 ﻿#pragma once
-#include "SIplusplus_wchar/graph_state.hpp"
+#define PUZZLE_DEBUG
+
+#ifdef PUZZLE_DEBUG
+#define PPK_ASSERT_ENABLED 1
+#else
+#define PPK_ASSERT_ENABLED 0
+#endif
+
+#include <unordered_set>
+#include <vector>
+#include "l_assert.h"
+#include "graph_search.hpp"
+#include "utils.h"
+#define NUMBER_OF_SHUFFLES 200
 
 
 typedef uint8_t uint8;
@@ -17,12 +30,14 @@ public:
 private:
     uint16 emptyIndex = 0;
 
-    const uint16* grid = nullptr;
+    mutable uint16* grid = nullptr;
     const uint16 n = 0;
     const uint16 size = 0;
     const Heuristic heuristic;
 
-    bool validateGrid();
+    std::vector<uint16> getMovableCells(uint16 emptyIndx);
+    void swapWithEmpty(uint16 indx);
+    void createGrid();
     void shuffleGrid();
 
 
