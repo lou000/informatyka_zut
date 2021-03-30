@@ -1,9 +1,12 @@
 ﻿#include "sudoku.h"
 
-Sudoku::Sudoku(const uint16 n, Cell* grid, std::unordered_set<uint16> emptyIndexes,
-               Heuristic heuristic)
-    :grid(grid), emptyIndexes(emptyIndexes), n(n), nn(n*n), size(n*n*n*n), heuristic(heuristic)
+Sudoku::Sudoku(const Sudoku *parent)
+    :emptyIndexes(parent->emptyIndexes), n(parent->n), nn(n*n),
+    size(n*n*n*n), gScore(parent->gScore), heuristic(parent->heuristic)
 {
+    grid = new Cell[size];
+    memcpy(grid, parent->grid, sizeof(Cell)*size);
+
     ASSERT(n != 0);
     ASSERT(grid != nullptr);
 #ifdef SUDOKU_DEBUG
@@ -70,6 +73,7 @@ void Sudoku::setCell(uint16 cell, uint16 value) const
     grid[cell].value = value;
     updateConstraintsAndSolutions(cell);
     emptyIndexes.erase(cell);
+    gScore++;
 }
 
 // This is a foreach type loop that iterates over column row and box coresponding
@@ -176,9 +180,7 @@ bool Sudoku::compare(const graph_state &a, const graph_state &b)
 
 std::unique_ptr<graph_state> Sudoku::clone() const
 {
-    Cell* newGrid = new Cell[size];
-    memcpy(newGrid, grid, sizeof(Cell)*size);
-    return std::make_unique<Sudoku>(n, newGrid, emptyIndexes, heuristic);
+    return std::make_unique<Sudoku>(this);
 }
 
 size_t Sudoku::hash_code() const
@@ -220,9 +222,9 @@ std::vector<std::unique_ptr<graph_state> > Sudoku::get_successors() const
         {
             Cell* newGrid = new Cell[size];
             memcpy(newGrid, grid, size * sizeof(Cell));
-            auto child = std::make_unique<Sudoku>(n, newGrid, emptyIndexes, heuristic);
+            auto child = std::make_unique<Sudoku>(this);
             child->setCell(maxIndex, sol);
-            child->update_score(0);
+            child->update_score(child->gScore);
 //            std::wcout<<child->to_string()<<"\n";
             successors.push_back(std::move(child));
         }

@@ -37,8 +37,7 @@ public:
         NumberOfUnknowns, SumOfRemainingSolutions
     };
     Sudoku(uint16 n, const char* grid, Heuristic heuristic = NumberOfUnknowns);
-    Sudoku(const uint16 n, Cell* grid, std::unordered_set<uint16> emptyIndexes,
-           Heuristic heuristic);
+    Sudoku(const Sudoku* parent);
     ~Sudoku();
 
     Sudoku(const Sudoku&) = delete;
@@ -53,6 +52,7 @@ private:
     const uint16 n = 0;
     const uint16 nn = 0;
     const uint16 size = 0;
+    mutable uint16 gScore = 0;
     const Heuristic heuristic = NumberOfUnknowns;
 
     void setupGridInfo();
