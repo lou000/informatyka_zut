@@ -171,7 +171,7 @@ void Sudoku::updateConstraintsAndSolutions(uint16 cellNr) const
 
 bool Sudoku::compare(const graph_state &a, const graph_state &b)
 {
-    return a.get_h()<b.get_h();
+    return a.get_f()<b.get_f();
 }
 
 std::unique_ptr<graph_state> Sudoku::clone() const

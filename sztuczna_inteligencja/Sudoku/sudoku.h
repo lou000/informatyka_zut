@@ -63,7 +63,7 @@ private:
     void forEachCRB(uint16 cellNr, std::function<bool(Cell*)> function) const;
 
 public:
-    static bool compare(const graph_state& a, const graph_state& b);
+    static bool compare(const graph_state &a, const graph_state &b);
 
     std::unique_ptr<graph_state> clone() const override;
     size_t hash_code() const override;

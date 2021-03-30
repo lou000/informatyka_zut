@@ -1,5 +1,6 @@
 ﻿#pragma once
-#define PUZZLE_DEBUG
+//#define PUZZLE_DEBUG
+#define SHUFFLES_FACTOR 500
 
 #ifdef PUZZLE_DEBUG
 #define PPK_ASSERT_ENABLED 1
@@ -8,41 +9,47 @@
 #endif
 
 #include <unordered_set>
+#include <cstring>  //for memcmp
 #include <vector>
-#include "l_assert.h"
 #include "graph_search.hpp"
 #include "utils.h"
-#define NUMBER_OF_SHUFFLES 200
+#include "math.h"
 
 
 typedef uint8_t uint8;
 typedef uint16_t uint16 ;
 
-class SlidePuzzle : graph_state
+class SlidePuzzle : public graph_state
 {
 public:
     enum Heuristic{
-        Manhattan, WrongPlace
+        Manhattan, MisplacedTiles
     };
-    SlidePuzzle(uint16 n, Heuristic heuristic);
-    SlidePuzzle(uint16 n, uint16* grid, Heuristic heuristic);
+    SlidePuzzle(uint16 n, int seed, Heuristic heuristic);
+    SlidePuzzle(const SlidePuzzle* parent, uint16 indxToSwap);
+    SlidePuzzle(const SlidePuzzle *parent);
+    ~SlidePuzzle();
 
 private:
+    int seed;
+    double hGrade = 0;
     uint16 emptyIndex = 0;
+    uint16 gScore = 0;
 
     mutable uint16* grid = nullptr;
     const uint16 n = 0;
     const uint16 size = 0;
     const Heuristic heuristic;
 
-    std::vector<uint16> getMovableCells(uint16 emptyIndx);
+    std::vector<uint16> getMovableCells(uint16 emptyIndx) const;
+    double getHGradeOfTile(uint16 indx) const;
     void swapWithEmpty(uint16 indx);
     void createGrid();
-    void shuffleGrid();
 
 
 public:
-    static bool compare(const graph_state& a, const graph_state& b);
+    void shuffleGrid();
+    static bool compare(const graph_state &a, const graph_state &b);
 
     bool is_solution() const override;
     std::unique_ptr<graph_state> clone() const override;
