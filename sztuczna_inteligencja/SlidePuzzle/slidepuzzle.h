@@ -25,6 +25,7 @@ public:
     enum Heuristic{
         Manhattan, MisplacedTiles
     };
+    SlidePuzzle(uint16 n, const char* str, Heuristic heuristic);
     SlidePuzzle(uint16 n, int seed, Heuristic heuristic);
     SlidePuzzle(const SlidePuzzle* parent, uint16 indxToSwap);
     SlidePuzzle(const SlidePuzzle *parent);

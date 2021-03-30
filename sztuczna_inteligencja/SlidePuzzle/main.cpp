@@ -6,10 +6,6 @@
 #include "slidepuzzle.h"
 #include <chrono>
 
-void testPuzzle(uint16 count, uint16 size, SlidePuzzle::Heuristic h)
-{
-
-}
 
 int main()
 {
@@ -18,7 +14,7 @@ int main()
     _setmode(_fileno(stdout), _O_U16TEXT);
 
 //    auto seed =std::chrono::steady_clock::now().time_since_epoch().count();
-//    SlidePuzzle puzzle = SlidePuzzle(3, 1, SlidePuzzle::Manhattan);
+//    SlidePuzzle puzzle = SlidePuzzle(6, seed, SlidePuzzle::Manhattan);
 //    std::wcout<<puzzle.to_string();
 
 //    auto searcher = informative_searcher(puzzle, &SlidePuzzle::compare);
@@ -31,7 +27,7 @@ int main()
 
     std::vector<SlidePuzzle*> puzzlesMan;
     std::vector<SlidePuzzle*> puzzlesMis;
-    int count = 100;
+    int count = 1000;
     for(int i=0; i<count; i++)
     {
         auto seed =std::chrono::steady_clock::now().time_since_epoch().count();
@@ -42,13 +38,13 @@ int main()
     for(auto puzzle : puzzlesMan)
         auto searcher = informative_searcher(*puzzle, &SlidePuzzle::compare);
     auto timeEnd = std::chrono::steady_clock::now();
-    std::wcout<<std::chrono::duration_cast<std::chrono::milliseconds>(timeEnd - timeStart).count()/count<<"ms\n";
+    std::wcout<<(double)std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count()/count/1000<<"ms\n";
 
     timeStart = std::chrono::steady_clock::now();
     for(auto puzzle : puzzlesMis)
         auto searcher = informative_searcher(*puzzle, &SlidePuzzle::compare);
     timeEnd = std::chrono::steady_clock::now();
-    std::wcout<<std::chrono::duration_cast<std::chrono::milliseconds>(timeEnd - timeStart).count()/count<<"ms\n";
+    std::wcout<<(double)std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count()/count/1000<<"ms\n";
 
     return 0;
 }

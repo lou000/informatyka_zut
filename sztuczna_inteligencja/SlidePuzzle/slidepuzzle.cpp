@@ -1,5 +1,22 @@
 ﻿#include "slidepuzzle.h"
 
+SlidePuzzle::SlidePuzzle(uint16 n, const char *str, SlidePuzzle::Heuristic heuristic)
+    :n(n), size(n*n), heuristic(heuristic)
+{
+    ASSERT(n!=0);
+    ASSERT(strlen(str) == size);
+    grid = new uint16[size];
+    for(int i=0; i<size;i++)
+    {
+        grid[i] = str[i] - '0';
+        if(grid[i]==0)
+            emptyIndex = i;
+        else
+            hGrade+=getHGradeOfTile(i);
+    }
+
+}
+
 SlidePuzzle::SlidePuzzle(uint16 n, int seed, SlidePuzzle::Heuristic heuristic)
     :seed(seed), n(n), size(n*n), heuristic(heuristic)
 {
@@ -234,7 +251,7 @@ std::vector<std::unique_ptr<graph_state> > SlidePuzzle::get_successors() const
     {
         auto child = std::make_unique<SlidePuzzle>(this, indx);
         child->update_score(gScore);
-        vec.push_back(std::make_unique<SlidePuzzle>(this, indx));
+        vec.push_back(std::move(child));
     }
     return vec;
 }
