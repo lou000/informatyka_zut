@@ -1,5 +1,5 @@
 ﻿#pragma once
-#define SUDOKU_DEBUG
+//#define SUDOKU_DEBUG
 
 #ifdef SUDOKU_DEBUG
 #define PPK_ASSERT_ENABLED 1
