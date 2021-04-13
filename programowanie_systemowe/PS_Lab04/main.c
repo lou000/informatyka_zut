@@ -50,7 +50,8 @@ int main(int argc, char **argv)
 
     char* appName = argv[optind];
     fprintf(stdout, "\nMeasuring time[ms]: %s ", argv[optind]);
-    char* appArgs[argc - optind];
+    char* appArgs[argc - optind+1];
+    appArgs[argc - optind] = 0;
     for(int i=optind, j=0; i<argc; i++, j++)
     {
         if(i != optind)
