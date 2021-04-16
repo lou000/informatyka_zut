@@ -10,17 +10,28 @@ int main()
     setlocale(LC_ALL, "");
     _setmode(_fileno(stdout), _O_U16TEXT);
 
-    Connect4 game = Connect4(5, 5, 1);
-    auto mv = game.createMove(1);
-    game.addUserMove(mv);
-    mv = game.createMove(1);
-    game.addUserMove(mv);
-    mv = game.createMove(2);
-    game.addUserMove(mv);
-    mv = game.createMove(3);
-    game.addUserMove(mv);
+    Connect4 c4 = Connect4(5, 5, 1);
+    auto game = alpha_beta_searcher<Move, true>(1,true);
 
-    std::wcout<<game.to_string();
+    game.do_search(c4);
+    auto moves = game.get_scores();
+    c4.commitMove(moves.front().first, false);
+
+//    auto userMove = c4.createMove(1);
+//    c4.commitMove(userMove, true);
+
+//    game.do_search(c4);
+//    moves = game.get_scores();
+//    c4.commitMove(moves.front().first, false);
+
+//    userMove = c4.createMove(0);
+//    c4.commitMove(userMove, true);
+
+//    game.do_search(c4);
+//    moves = game.get_scores();
+//    c4.commitMove(moves.front().first, false);
+
+    std::wcout<<c4.to_string();
 
     return 0;
 }

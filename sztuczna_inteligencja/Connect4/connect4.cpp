@@ -263,12 +263,13 @@ Move Connect4::createMove(uint8 column, bool user) const
     return move;
 }
 
-void Connect4::addUserMove(Move move)
+void Connect4::commitMove(Move move, bool user)
 {
-    grid[move.y*width+move.x] = 'O';
+    grid[move.y*width+move.x] = user ? 'O' : 'X';
     if(move.h_grade == std::numeric_limits<double>::infinity())
-        hGrade = -std::numeric_limits<double>::infinity();
-    hGrade -= move.h_grade; //i have no idea if we do this
+        hGrade = user ? -std::numeric_limits<double>::infinity() : std::numeric_limits<double>::infinity();
+    else
+        hGrade = user ? -move.h_grade : move.h_grade; //i have no idea if we do this
 }
 
 bool Connect4::is_equal(const game_state<Move> &s) const

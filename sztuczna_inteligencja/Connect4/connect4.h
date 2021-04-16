@@ -25,7 +25,7 @@ public:
     virtual double get_h() const;
     virtual std::optional<double> is_terminal() const;
     Move createMove(uint8 column, bool user = true) const;
-    void addUserMove(Move move);
+    void commitMove(Move move, bool user);
 
 protected:
     virtual bool is_equal(const game_state<Move> &s) const;
