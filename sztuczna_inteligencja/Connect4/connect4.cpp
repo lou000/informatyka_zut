@@ -123,9 +123,8 @@ double Connect4::get_h() const
 
 std::optional<double> Connect4::is_terminal() const
 {
-    if(hGrade == std::numeric_limits<double>::infinity() ||
-        hGrade == -std::numeric_limits<double>::infinity())
-        return hGrade;
+    if(terminal == 0 || std::isinf(terminal))
+        return terminal;
     return {};
 }
 
@@ -140,6 +139,8 @@ Move Connect4::createMove(uint8 column, bool user) const
         int indx = i*width+column;
         if(grid[indx] == ' ')
             freeIndex = indx;
+        else
+            break;
     }
 
     if(freeIndex == -1)
@@ -182,31 +183,31 @@ Move Connect4::createMove(uint8 column, bool user) const
     uint TR = 0;
     for(int i=row-1, j=column+1; i>0 && j<width; i--, j++)
     {
-        if(grid[row*width+height] == mark)
+        if(grid[i*width+j] == mark)
             TR++;
         else
             break;
     }
-    uint TL = grid[freeIndex-width-1] == mark && row>0 && column>0;
+    uint TL = 0;
     for(int i=row-1, j=column-1; i>0 && j>0; i--, j--)
     {
-        if(grid[row*width+height] == mark)
+        if(grid[i*width+j] == mark)
             TL++;
         else
             break;
     }
-    uint BR = grid[freeIndex+width+1] == mark && row<height && column<width;
+    uint BR = 0;
     for(int i=row+1, j=column+1; i<height && j<width; i++, j++)
     {
-        if(grid[row*width+height] == mark)
+        if(grid[i*width+j] == mark)
             BR++;
         else
             break;
     }
-    uint BL = grid[freeIndex+width-1] == mark && row<height && column>0;
+    uint BL = 0;
     for(int i=row+1, j=column-1; i<height && j>0; i++, j--)
     {
-        if(grid[row*width+height] == mark)
+        if(grid[i*width+j] == mark)
             BL++;
         else
             break;
@@ -225,7 +226,7 @@ Move Connect4::createMove(uint8 column, bool user) const
             if(pair.first + pair.second >= 3)
             {
                 // someone won
-                hGradeIncrement = std::numeric_limits<double>::infinity();
+                move.h_grade = 999;
                 over = true;
             }
             else
@@ -237,26 +238,31 @@ Move Connect4::createMove(uint8 column, bool user) const
         }
         else if(pair.first || pair.second)
         {
-            if(pair.first == 1)
+            if(pair.first == 1 || pair.second == 1)
                 hGradeIncrement += 4; // if there was one we now have two add 4
-            if(pair.first == 2)
+            if(pair.first == 2 || pair.second == 2)
                 hGradeIncrement += 12; // if there was two we now have three add 12
-
-            if(pair.second == 1)
-                hGradeIncrement += 4;
-            if(pair.second == 2)
-                hGradeIncrement += 12;
+            if(pair.first == 3 || pair.second == 3)
+            {
+                move.h_grade = 999;
+                over = true;
+            }
         }
     };
     testPair({left, right});
+    if(over) return move;
     testPair({BL, TR});
+    if(over) return move;
     testPair({BR, TL});
+    if(over) return move;
 
     //never forget about bottom
     if(bottom == 1)
         hGradeIncrement += 4;
     if(bottom == 2)
         hGradeIncrement += 12;
+    if(bottom == 3)
+        hGradeIncrement = 999;
 
     move.h_grade = hGradeIncrement;
 
@@ -266,10 +272,11 @@ Move Connect4::createMove(uint8 column, bool user) const
 void Connect4::commitMove(Move move, bool user)
 {
     grid[move.y*width+move.x] = user ? 'O' : 'X';
-    if(move.h_grade == std::numeric_limits<double>::infinity())
-        hGrade = user ? -std::numeric_limits<double>::infinity() : std::numeric_limits<double>::infinity();
-    else
-        hGrade = user ? -move.h_grade : move.h_grade; //i have no idea if we do this
+    if(move.h_grade == 999)
+    {
+        terminal = user ? -std::numeric_limits<double>::infinity() : std::numeric_limits<double>::infinity();
+    }
+    hGrade += user ? -move.h_grade : move.h_grade;
 }
 
 bool Connect4::is_equal(const game_state<Move> &s) const

@@ -1,4 +1,4 @@
-#include "game_searcher.hpp"
+﻿#include "game_searcher.hpp"
 #include "utils.h"
 #include <math.h>
 #include <optional>
@@ -9,6 +9,9 @@ typedef uint8_t uint8;
 struct Move{
     uint8 x, y;
     double h_grade;
+    void print(){
+        std::wcout<<"{"<<x<<","<<y<<"} g:"<<h_grade<<",  ";
+    }
 };
 
 class Connect4 : public game_state<Move>
@@ -26,14 +29,15 @@ public:
     virtual std::optional<double> is_terminal() const;
     Move createMove(uint8 column, bool user = true) const;
     void commitMove(Move move, bool user);
+    mutable char* grid = nullptr;
 
 protected:
     virtual bool is_equal(const game_state<Move> &s) const;
 
 private:
     double hGrade = 0;
+    double terminal = -1;
 
-    mutable char* grid = nullptr;
     const uint8 width, height;
     const uint size;
     const uint difficulty;
