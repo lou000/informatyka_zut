@@ -43,7 +43,7 @@ public:
 	 * @brief Method creates string representation of the current state.
 	 * @return string containing character representation.
 	 */
-	virtual std::string to_string() const = 0;
+    virtual std::wstring to_string() const = 0;
 
 	/**
 	 * @brief Method computes score of the current state. Positive value

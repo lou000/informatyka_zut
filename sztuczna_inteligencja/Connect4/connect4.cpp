@@ -1,0 +1,280 @@
+﻿#include "connect4.h"
+#include <limits>
+#include <iostream>
+#include <sstream>
+
+Connect4::Connect4(uint8 w, uint8 h, uint difficulty)
+    :width(w), height(h), size(w*h), difficulty(difficulty)
+{
+    grid = (char*)malloc(size*sizeof(char));
+    for(uint i=0; i<size; i++)
+        grid[i] = ' ';
+}
+
+Connect4::Connect4(const Connect4 *parent)
+    :width(parent->width), height(parent->height), size(parent->size), difficulty(parent->difficulty)
+{
+    grid = (char*)malloc(size*sizeof(char));
+    memcpy(grid, parent->grid, sizeof(char)*size);
+    hGrade = parent->hGrade;
+}
+
+Connect4::Connect4(const Connect4 *parent, Move move)
+    :width(parent->width), height(parent->height), size(parent->size), difficulty(parent->difficulty)
+{
+    grid = (char*)malloc(size*sizeof(char));
+    memcpy(grid, parent->grid, sizeof(char)*size);
+    grid[move.y*width+move.x] = 'X';
+    hGrade = parent->hGrade + move.h_grade;
+}
+
+std::unique_ptr<game_state<Move>> Connect4::clone() const
+{
+    return std::make_unique<Connect4>(this);
+}
+
+std::vector<Move> Connect4::generate_moves() const
+{
+    //all possible moves
+    std::vector<Move> moves;
+
+    for(int i=0; i<width; i++)
+    {
+        auto move = createMove(i, false);
+        if(move.h_grade >= 0)
+            moves.push_back(move);
+    }
+
+    return moves;
+}
+
+std::unique_ptr<game_state<Move> > Connect4::make_move(const Move &move) const
+{
+    return std::make_unique<Connect4>(this, move);
+}
+
+size_t Connect4::hash_code() const
+{
+    size_t hash = 0;
+    for(uint i=0; i<size; i++)
+    {
+        // This hash function is shamelessly stolen from boost::hash_combine.
+        // https://www.boost.org/doc/libs/1_35_0/doc/html/boost/hash_combine_id241013.html
+        hash ^= grid[i] + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+    }
+    return hash;
+}
+
+std::wstring Connect4::to_string() const
+{
+    std::wstringstream stream;
+
+    //Top of the table
+    stream<<L"╔";
+    for(int i=1; i<=width; i++)
+    {
+        if(i == width)    //if end of the row
+            stream<<L"═══╗";
+        else
+            stream<<L"═══╤";
+    }
+    stream<<"hGrade = "<<hGrade<<"\n";
+
+    for(uint i=0; i<height; i++)
+    {
+        for(uint j=0; j<width; j++)
+        {
+            if(j==0)
+                stream<<L"║ "<<grid[i*height+j]<<" ";
+            else
+                stream<<L"│ "<<grid[i*height+j]<<" ";
+        }
+        stream<<L"║\n";
+        if(i!=height-1)
+        {
+            for(uint j=0; j<width; j++)
+            {
+                if(j==0)
+                    stream<<L"╟───";
+                else
+                    stream<<L"┼───";
+            }
+            stream<<L"╢\n";
+        }
+    }
+
+    stream<<L"╚";
+    for(int i=1; i<=width; i++)
+    {
+        if(i == width)    //if end of the row
+            stream<<L"═══╝";
+        else
+            stream<<L"═══╧";
+    }
+    stream<<"\n";
+
+    return stream.str();
+}
+
+double Connect4::get_h() const
+{
+    return hGrade;
+}
+
+std::optional<double> Connect4::is_terminal() const
+{
+    if(hGrade == std::numeric_limits<double>::infinity() ||
+        hGrade == -std::numeric_limits<double>::infinity())
+        return hGrade;
+    return {};
+}
+
+Move Connect4::createMove(uint8 column, bool user) const
+{
+    Move move;
+    move.x = column;
+    //Check if the move is valid and where it lands
+    int freeIndex = -1;
+    for(uint i=0; i<height; i++)
+    {
+        int indx = i*width+column;
+        if(grid[indx] == ' ')
+            freeIndex = indx;
+    }
+
+    if(freeIndex == -1)
+    {
+        move.h_grade = -1;
+        return move;
+    }
+
+
+    //calculate heuristic
+    char mark = user ? 'O' : 'X';
+    int row = freeIndex/width;
+    move.y = row;
+
+    //count repeating states in all directions except up
+    uint left = 0;
+    for(int i=column, j=-1; i>0; i--, j--)
+    {
+        if(grid[freeIndex+j] == mark)
+            left++;
+        else
+            break;
+    }
+    uint right = 0;
+    for(int i=column, j= 1; i<width; i++, j++)
+    {
+        if(grid[freeIndex+j] == mark)
+            right++;
+        else
+            break;
+    }
+    uint bottom = 0;
+    for(int i=row, j= 1; i<height; i++, j++)
+    {
+        if(grid[freeIndex+width*j] == mark)
+            bottom++;
+        else
+            break;
+    }
+    uint TR = 0;
+    for(int i=row-1, j=column+1; i>0 && j<width; i--, j++)
+    {
+        if(grid[row*width+height] == mark)
+            TR++;
+        else
+            break;
+    }
+    uint TL = grid[freeIndex-width-1] == mark && row>0 && column>0;
+    for(int i=row-1, j=column-1; i>0 && j>0; i--, j--)
+    {
+        if(grid[row*width+height] == mark)
+            TL++;
+        else
+            break;
+    }
+    uint BR = grid[freeIndex+width+1] == mark && row<height && column<width;
+    for(int i=row+1, j=column+1; i<height && j<width; i++, j++)
+    {
+        if(grid[row*width+height] == mark)
+            BR++;
+        else
+            break;
+    }
+    uint BL = grid[freeIndex+width-1] == mark && row<height && column>0;
+    for(int i=row+1, j=column-1; i<height && j>0; i++, j--)
+    {
+        if(grid[row*width+height] == mark)
+            BL++;
+        else
+            break;
+    }
+    //god help me if there is a bug in something above
+
+
+    //Calculate change of the hGrade
+    double hGradeIncrement = 0;
+    bool over = false;
+
+    auto testPair=[&](std::pair<uint, uint> pair){
+        if(pair.first && pair.second)
+        {
+
+            if(pair.first + pair.second >= 3)
+            {
+                // someone won
+                hGradeIncrement = std::numeric_limits<double>::infinity();
+                over = true;
+            }
+            else
+            {
+                // There is only one case here both left and right are = 1
+                // and after the move we connect them giving us 3 states in a row
+                hGradeIncrement += 16;
+            }
+        }
+        else if(pair.first || pair.second)
+        {
+            if(pair.first == 1)
+                hGradeIncrement += 4; // if there was one we now have two add 4
+            if(pair.first == 2)
+                hGradeIncrement += 12; // if there was two we now have three add 12
+
+            if(pair.second == 1)
+                hGradeIncrement += 4;
+            if(pair.second == 2)
+                hGradeIncrement += 12;
+        }
+    };
+    testPair({left, right});
+    testPair({BL, TR});
+    testPair({BR, TL});
+
+    //never forget about bottom
+    if(bottom == 1)
+        hGradeIncrement += 4;
+    if(bottom == 2)
+        hGradeIncrement += 12;
+
+    move.h_grade = hGradeIncrement;
+
+    return move;
+}
+
+void Connect4::addUserMove(Move move)
+{
+    grid[move.y*width+move.x] = 'O';
+    if(move.h_grade == std::numeric_limits<double>::infinity())
+        hGrade = -std::numeric_limits<double>::infinity();
+    hGrade -= move.h_grade; //i have no idea if we do this
+}
+
+bool Connect4::is_equal(const game_state<Move> &s) const
+{
+    const Connect4* st = dynamic_cast<const Connect4*>(&s);
+    ASSERT(size == st->size);
+    int eq = memcmp(grid, st->grid, size * sizeof (char));
+    return eq == 0;
+}
