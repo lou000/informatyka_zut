@@ -3,8 +3,8 @@
 #include <iostream>
 #include <sstream>
 
-Connect4::Connect4(uint8 w, uint8 h, uint difficulty)
-    :width(w), height(h), size(w*h), difficulty(difficulty)
+Connect4::Connect4(uint8 w, uint8 h)
+    :width(w), height(h), size(w*h)
 {
     grid = (char*)malloc(size*sizeof(char));
     for(uint i=0; i<size; i++)
@@ -12,20 +12,21 @@ Connect4::Connect4(uint8 w, uint8 h, uint difficulty)
 }
 
 Connect4::Connect4(const Connect4 *parent)
-    :width(parent->width), height(parent->height), size(parent->size), difficulty(parent->difficulty)
+    :hGrade(parent->hGrade), userTurn(parent->userTurn), width(parent->width), height(parent->height),
+     size(parent->size)
 {
     grid = (char*)malloc(size*sizeof(char));
     memcpy(grid, parent->grid, sizeof(char)*size);
-    hGrade = parent->hGrade;
 }
 
 Connect4::Connect4(const Connect4 *parent, Move move)
-    :width(parent->width), height(parent->height), size(parent->size), difficulty(parent->difficulty)
+    :hGrade(parent->hGrade), userTurn(parent->userTurn), width(parent->width), height(parent->height),
+     size(parent->size)
+
 {
     grid = (char*)malloc(size*sizeof(char));
     memcpy(grid, parent->grid, sizeof(char)*size);
-    grid[move.y*width+move.x] = 'X';
-    hGrade = parent->hGrade + move.h_grade;
+    commitMove(move);
 }
 
 std::unique_ptr<game_state<Move>> Connect4::clone() const
@@ -40,7 +41,7 @@ std::vector<Move> Connect4::generate_moves() const
 
     for(int i=0; i<width; i++)
     {
-        auto move = createMove(i, false);
+        auto move = createMove(i);
         if(move.h_grade >= 0)
             moves.push_back(move);
     }
@@ -128,7 +129,7 @@ std::optional<double> Connect4::is_terminal() const
     return {};
 }
 
-Move Connect4::createMove(uint8 column, bool user) const
+Move Connect4::createMove(uint8 column) const
 {
     Move move;
     move.x = column;
@@ -151,13 +152,13 @@ Move Connect4::createMove(uint8 column, bool user) const
 
 
     //calculate heuristic
-    char mark = user ? 'O' : 'X';
+    char mark = userTurn ? 'O' : 'X';
     int row = freeIndex/width;
     move.y = row;
 
     //count repeating states in all directions except up
     uint left = 0;
-    for(int i=column, j=-1; i>0; i--, j--)
+    for(int i=column, j=-1; i>=0; i--, j--)
     {
         if(grid[freeIndex+j] == mark)
             left++;
@@ -181,7 +182,7 @@ Move Connect4::createMove(uint8 column, bool user) const
             break;
     }
     uint TR = 0;
-    for(int i=row-1, j=column+1; i>0 && j<width; i--, j++)
+    for(int i=row-1, j=column+1; i>=0 && j<width; i--, j++)
     {
         if(grid[i*width+j] == mark)
             TR++;
@@ -189,7 +190,7 @@ Move Connect4::createMove(uint8 column, bool user) const
             break;
     }
     uint TL = 0;
-    for(int i=row-1, j=column-1; i>0 && j>0; i--, j--)
+    for(int i=row-1, j=column-1; i>=0 && j>=0; i--, j--)
     {
         if(grid[i*width+j] == mark)
             TL++;
@@ -205,7 +206,7 @@ Move Connect4::createMove(uint8 column, bool user) const
             break;
     }
     uint BL = 0;
-    for(int i=row+1, j=column-1; i<height && j>0; i++, j--)
+    for(int i=row+1, j=column-1; i<height && j>=0; i++, j--)
     {
         if(grid[i*width+j] == mark)
             BL++;
@@ -239,9 +240,9 @@ Move Connect4::createMove(uint8 column, bool user) const
         else if(pair.first || pair.second)
         {
             if(pair.first == 1 || pair.second == 1)
-                hGradeIncrement += 4; // if there was one we now have two add 4
+                hGradeIncrement += 4; // if there was one we now have two, add 4
             if(pair.first == 2 || pair.second == 2)
-                hGradeIncrement += 12; // if there was two we now have three add 12
+                hGradeIncrement += 12; // if there was two we now have three, add 12
             if(pair.first == 3 || pair.second == 3)
             {
                 move.h_grade = 999;
@@ -269,20 +270,20 @@ Move Connect4::createMove(uint8 column, bool user) const
     return move;
 }
 
-void Connect4::commitMove(Move move, bool user)
+void Connect4::commitMove(Move move)
 {
-    grid[move.y*width+move.x] = user ? 'O' : 'X';
+    grid[move.y*width+move.x] = userTurn ? 'O' : 'X';
     if(move.h_grade == 999)
     {
-        terminal = user ? -std::numeric_limits<double>::infinity() : std::numeric_limits<double>::infinity();
+        terminal = userTurn ? -std::numeric_limits<double>::infinity() : std::numeric_limits<double>::infinity();
     }
-    hGrade += user ? -move.h_grade : move.h_grade;
+    hGrade += userTurn ? -move.h_grade : move.h_grade;
+    userTurn = !userTurn;
 }
 
 bool Connect4::is_equal(const game_state<Move> &s) const
 {
     const Connect4* st = dynamic_cast<const Connect4*>(&s);
-    ASSERT(size == st->size);
     int eq = memcmp(grid, st->grid, size * sizeof (char));
     return eq == 0;
 }

@@ -49,7 +49,7 @@ public:
     bool OnUserUpdate(float dt) override
     {
         handleInput();
-        auto pos = simulateStep(0.0001, dt);
+        auto pos = simulateStep(0.00001, dt);
         spawnParticles(pos, dt);
         Clear(olc::VERY_DARK_GREY);
         updateAndDrawParticles(dt);
