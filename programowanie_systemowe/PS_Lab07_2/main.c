@@ -55,8 +55,8 @@ char* attackPassword(char* idAndSalt, char* hash, char* dictionary, uint count, 
 {
     char* pw = malloc(maxPwLength+1); //this is for performance if there is longer pw in dictionary just skip it
     char* dictPtr = dictionary;
-    uint lines = 0;
-    while (lines<count)
+    uint chars = 0;
+    while (chars<count)
     {
         uint len = lineLen(dictPtr);
         if(len<maxPwLength)
@@ -66,13 +66,18 @@ char* attackPassword(char* idAndSalt, char* hash, char* dictionary, uint count, 
             pw[len] = 0;
 
             char* encrypted = crypt_r(pw, idAndSalt, &data);
+            if(!encrypted)
+            {
+                fprintf(stderr, "Failed to encrypt password according to your password format.\n");
+                return NULL;
+            }
             if(strcmp(encrypted, hash)==0)
                 return pw;
         }
-        lines++;
-        dictPtr+=len+1;
-        if(lines % 1000 == 0)
-            printf("Thread nr %ld:  %.2f%%    lastPW: %s\n", pthread_self(), ((float)lines/(float)count)*100, pw);
+        chars += len+1;
+        dictPtr += len+1;
+        if(chars % 1000 == 0)
+            printf("Thread nr %ld:  %.2f%%    lastPW: %s\n", pthread_self(), ((float)chars/(float)count)*100, pw);
     }
     free(pw);
     return NULL;
@@ -82,7 +87,7 @@ struct workInfo{
     char* idAndSalt;
     char* hash;
     char* dictionary;
-    uint count;
+    uint dictSize;
     uint maxPwLength;
 };
 
@@ -90,9 +95,62 @@ void* threadWork(void* workInfo)
 {
     struct workInfo* info = (struct workInfo*) workInfo;
     char* pw = attackPassword(info->idAndSalt, info->hash,
-                              info->dictionary, info->count,
+                              info->dictionary, info->dictSize,
                               info->maxPwLength);
     pthread_exit(pw);
+}
+
+int runThreadCreationLoop(uint threadCount, struct workInfo info)
+{
+    char* file = info.dictionary;
+    char* encryptedPassword = info.hash;
+    char* idAndSalt = info.idAndSalt;
+    uint maxPwLength = info.maxPwLength;
+    uint dictSize = info.dictSize;
+
+    pthread_t* threads = malloc(sizeof(pthread_t) * threadCount);
+    struct workInfo* infoArray = malloc(sizeof (struct workInfo) * threadCount);
+    for(uint i=0; i<threadCount; i++)
+    {
+        if(i == threadCount - 1) //last thread gets the remaining bit
+            infoArray[i].dictSize = (dictSize/threadCount)+dictSize % threadCount;
+        else
+            infoArray[i].dictSize = dictSize/threadCount;
+
+        infoArray[i].dictionary = file;
+        infoArray[i].hash = encryptedPassword;
+        infoArray[i].idAndSalt = idAndSalt;
+        infoArray[i].maxPwLength = maxPwLength;
+        pthread_create(&threads[i], NULL, threadWork, (void*)(infoArray+i));
+        file+=dictSize/threadCount;
+    }
+
+    uint finished = 0;
+    while(finished != threadCount)
+    {
+        for(uint i=0; i<threadCount; i++)
+        {
+            if(threads[i] == 0)
+                continue;
+            char* retVal;
+            int result = pthread_join(threads[i], (void**)&retVal);
+            if(!result) // thread exited
+            {
+                if(retVal)
+                {
+                    printf("Found the password: %s\n", retVal);
+                    free(threads);
+                    free(infoArray);
+                    return 1;
+                }
+                threads[i] = 0;
+                finished++;
+            }
+        }
+    }
+    free(threads);
+    free(infoArray);
+    return 0;
 }
 
 
@@ -103,46 +161,39 @@ int main(int argc, char **argv)
     int pwFileHandle = 0;
     uint maxPwLength = 200;
     uint maxThreads = 0;
-    while((arg = getopt(argc, argv, "e:d:m:t:")) != -1)
+    while((arg = getopt(argc, argv, "m:t:")) != -1)
     {
         //FIXME: hash and dictionary shouldnt be optional
         switch (arg)
         {
-        case 'e':
-            if((pwFileHandle = open(optarg, O_RDONLY))<0)
-            {
-                fprintf(stderr, "Couldnt open file with encrypted password.\n"
-                                "Usage: Lab07_1 [-e encypted pw file] [-d dictionary file] [-m max pw length] [-t n.o. threds]\n");
-                return 1;
-            }
-            break;
-        case 'd':
-            if((fileHandle = open(optarg, O_RDONLY))<0)
-            {
-                fprintf(stderr, "Couldnt open provided dictionary file.\n"
-                                "Usage: Lab07_1 [-e encrypted pw] [-d dictionary file] [-m max pw length] [-t n.o. threds]\n");
-                return 1;
-            }
-            break;
         case 'm':
             maxPwLength = atoi(optarg);
             if(maxPwLength <= 0)
                 fprintf(stderr, "Max pw length cannot be zero or less.\n"
-                                "Usage: Lab07_1 [-e encrypted pw] [-d dictionary file] [-m max pw length] [-t n.o. threds]\n");
+                                "Usage: Lab07_1 [-m max pw length] [-t n.o. threds] encrypted_password dictionary\n");
             break;
         case 't':
             maxThreads = atoi(optarg);
             if(maxThreads <= 0)
                 fprintf(stderr, "Max threads cannot be zero or less.\n"
-                                "Usage: Lab07_1 [-e encrypted pw] [-d dictionary file] [-m max pw length] [-t n.o. threds]\n");
+                                "Usage: Lab07_1 [-m max pw length] [-t n.o. threds] encrypted_password dictionary\n");
             break;
 
 
         case '?':
-            fprintf(stderr, "Usage: Lab07_1 [-e encrypted pw] [-d dictionary file] [-m max pw length] [-t n.o. threds]\n");
+            fprintf(stderr, "Usage: Lab07_1 [-m max pw length] [-t n.o. threds] encrypted_password dictionary\n");
             return 1;
         }
     }
+    if (optind >= argc) {
+        fprintf(stderr, "Missing argument after options.\n");
+        fprintf(stderr, "Usage: Lab07_1 [-m max pw length] [-t n.o. threds] encrypted_password dictionary\n");
+        return 0;
+    }
+
+    fileHandle = open(argv[optind+1], O_RDONLY);
+    pwFileHandle = open(argv[optind], O_RDONLY);
+
     if(fileHandle<0 || pwFileHandle<0)
         fprintf(stderr, "Encrypted password and dictionary must be provided.\n"
                         "Usage: Lab07_1 [-e encrypted pw] [-d dictionary file] [-m max pw length] [-t n.o. threds]\n");
@@ -162,8 +213,6 @@ int main(int argc, char **argv)
         fprintf(stderr, "Failed to map the file, exiting.\n");
         return 1;
     }
-    char* fileEnd = file+fileStatus.st_size;
-    char* fileStart = file;
 
     success = fstat(pwFileHandle, &fileStatus);
     if(success<0)
@@ -172,7 +221,11 @@ int main(int argc, char **argv)
         return 1;
     }
     char* encryptedPassword = malloc(fileStatus.st_size);
-    read(pwFileHandle, encryptedPassword, fileStatus.st_size);
+    if(read(pwFileHandle, encryptedPassword, fileStatus.st_size)==-1)
+    {
+        fprintf(stderr, "Couldnt read encypted password from file.\n");
+        return 1;
+    }
     if(encryptedPassword[fileStatus.st_size-1] == '\n') //overwrite newline if there is one
         encryptedPassword[fileStatus.st_size-1] = 0;
 
@@ -185,56 +238,34 @@ int main(int argc, char **argv)
         return 1;
     }
 
+
+    struct workInfo info;
+    info.dictSize = dictSize;
+    info.dictionary = file;
+    info.hash = encryptedPassword;
+    info.idAndSalt = idAndSalt;
+    info.maxPwLength = maxPwLength;
+
     if(maxThreads == 0)
     {
-        maxThreads = sysconf(_SC_NPROCESSORS_ONLN);
-        printf("Max threads not specified using %d threads as default.\n", maxThreads);
-    }
-
-    pthread_t* threads = malloc(sizeof(pthread_t) * maxThreads);
-    struct workInfo* info = malloc(sizeof (struct workInfo) * maxThreads);
-    for(uint i=0; i<maxThreads && file<fileEnd; i++)
-    {
-        info[i].count = dictSize/maxThreads;
-        info[i].dictionary = file;
-        info[i].hash = encryptedPassword;
-        info[i].idAndSalt = idAndSalt;
-        info[i].maxPwLength = maxPwLength;
-        pthread_create(&threads[i], NULL, threadWork, (void*)(info+i));
-        file+=dictSize/maxThreads;
-    }
-    // need to do rest of the file when we encounter end
-
-    uint finished = 0;
-    while(file<=fileEnd)
-    {
-        for(uint i=0; i<maxThreads; i++)
+        // do the perf testing here
+        info.dictSize = 2000;
+        info.hash = "dummyHash";
+        printf("Max threads not specified, running performance test to determine optimal number of threads.\n");
+        for(uint i=1; i<=10; i++) //testing up to ten threads
         {
-            if(threads[i] == 0)
-                continue;
-            char* retVal;
-            int result = pthread_join(threads[i], (void**)&retVal);
-            if(!result) // thread exited
-            {
-                if(retVal)
-                {
-                    printf("Found the password: %s\n", retVal);
-                    return 0;
-                }
-//                else
-//                {
-//                    float progress = (float)(file - fileStart)/(float)(fileEnd-fileStart);
-//                    printf("Progress: %.3f%%\n", progress);
-//                    pthread_create(&threads[i], NULL, threadWork, (void*)(info+i));
-//                    file+=1000;
-//                }
-                threads[i] = 0;
-                finished++;
-            }
+            struct timespec time1, time2;
+            clock_gettime(CLOCK_MONOTONIC, &time1);
+            runThreadCreationLoop(i, info);
+            clock_gettime(CLOCK_MONOTONIC, &time2);
+            double diffClock = (time2.tv_sec - time1.tv_sec) * 1000 + (double)(time2.tv_nsec - time1.tv_nsec) * 1e-6;
+            printf("%d thread(s): %.3fms\n", i, diffClock);
         }
     }
+    else
+        runThreadCreationLoop(maxThreads, info);
 
+    free(encryptedPassword);
     free(idAndSalt);
-    free(info);
-    free(threads);
+    return 0;
 }
