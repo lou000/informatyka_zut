@@ -7,7 +7,8 @@ void startTimer()
 {
     struct timeval now;
     gettimeofday(&now, NULL);
-    startTime = malloc(sizeof(struct timeval));
+    if(!pthread_getspecific(timeStartedKey))
+        startTime = malloc(sizeof(struct timeval));
     *startTime = now;
     pthread_setspecific(timeStartedKey, startTime);
 }
@@ -17,9 +18,8 @@ void stopTimer()
     struct timeval now;
     gettimeofday(&now, NULL);
     pthread_t self = pthread_self();
-
     struct timeval* specTimeStart = pthread_getspecific(timeStartedKey);
-    printf("Start time:%ld \n", specTimeStart->tv_sec*1000 + specTimeStart->tv_usec/1000);
-    printf("Thread id:%ld exiting after %ldms \n", self,
-           (now.tv_sec*1000 + now.tv_usec/1000) - (specTimeStart->tv_sec*1000 + specTimeStart->tv_usec/1000));
+    if(specTimeStart)
+        printf("Thread id:%ld exiting after %ldms \n", self,
+            (now.tv_sec*1000 + now.tv_usec/1000) - (specTimeStart->tv_sec*1000 + specTimeStart->tv_usec/1000));
 }
