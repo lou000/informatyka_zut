@@ -1,3 +1,7 @@
+// PS IN1 320 LAB07
+// Maciej Lewicki
+// lm34410@zut.edu.pl
+
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <unistd.h>
@@ -76,7 +80,7 @@ char* attackPassword(char* idAndSalt, char* hash, char* dictionary, uint count, 
         }
         chars += len+1;
         dictPtr += len+1;
-        if(chars % 1000 == 0)
+        if(chars % 2000 == 0)
             printf("Thread nr %ld:  %.2f%%    lastPW: %s\n", pthread_self(), ((float)chars/(float)count)*100, pw);
     }
     free(pw);
