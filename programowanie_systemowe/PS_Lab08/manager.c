@@ -239,6 +239,7 @@ int main(int argc, char **argv)
                 if(strlen(msg.msg)>0)
                 {
                     printf("Process(%d) found password: %s in job(%d)\n", msg.pid, msg.msg, msg.left.id);
+                    removeProcess(msg.pid);
                     killAll(processes, taskCount);
                     cleanup();
                     return 0;
