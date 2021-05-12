@@ -15,8 +15,8 @@ void killAll(pid_t* processes, uint count)
     for(uint i=0; i<count; i++)
         if(processes[i]!=0)
         {
+            printf("Killing process(%d)\n", processes[i]);
             ASSERT_ERROR(kill(processes[i], SIGINT), -1);
-            printf("Killing process(%d)", processes[i]);
         }
 }
 
