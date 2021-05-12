@@ -170,7 +170,7 @@ int main(int argc, char **argv)
         {
             fprintf(stderr, "There is no work left in queue.\n");
         }
-        printf("Job nr %d finished.", i);
+        printf("Job(%d) finished.\n", work.id);
     }
 
     msg.status = Exit;

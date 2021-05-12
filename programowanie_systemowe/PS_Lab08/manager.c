@@ -211,10 +211,7 @@ int main(int argc, char **argv)
     // WorkMsg handling loop
     while(jobsDone < taskCount)
     {
-        struct timespec timeout;
-        clock_gettime(CLOCK_REALTIME, &timeout);
-        timeout.tv_sec += 1;
-        if(mq_timedreceive(returnQ, (char*)&msg, sizeof (struct WorkMsg),0, &timeout)>0)
+        if(mq_receive(returnQ, (char*)&msg, sizeof (struct WorkMsg),0)>0)
         {
             // handle WorkMsg
             switch (msg.status) {
@@ -271,9 +268,9 @@ int main(int argc, char **argv)
             }
             }
         }
-        else if(errno != ETIMEDOUT)
+        else
         {
-            fprintf(stderr, "Failed to get WorkMsg.\n");
+            LOG_ERR("Failed to get WorkMsg");
         }
     }
 
