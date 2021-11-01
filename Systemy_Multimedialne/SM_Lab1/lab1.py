@@ -68,23 +68,28 @@ def do_it_all(_image, _palette):
 
     _ax = plt.subplot(1, width, 1)
     _ax.set_axis_off()
+    _ax.set_title('Oryginał')
     plt.imshow(_image, cmap=_cmap)
 
     _ax = plt.subplot(1, width, 2)
     _ax.set_axis_off()
+    _ax.set_title('Kwantyzacja')
     plt.imshow(quantize(_image, _palette), cmap=_cmap)
 
     _ax = plt.subplot(1, width, 3)
     _ax.set_axis_off()
+    _ax.set_title('Dithering zorganizowany')
     plt.imshow(organizedM2(_image, _palette), cmap=_cmap)
 
     _ax = plt.subplot(1, width, 4)
     _ax.set_axis_off()
+    _ax.set_title('Floyd_Steinberg')
     plt.imshow(Floyd_Steinberg(_image, _palette), cmap=_cmap)
 
     if greyscale and len(_palette) == 2:
         _ax = plt.subplot(1, width, 5)
         _ax.set_axis_off()
+        _ax.set_title('Dithering losowy')
         plt.imshow(randomDither(_image), cmap=_cmap)
 
     plt.tight_layout()
