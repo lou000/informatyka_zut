@@ -96,9 +96,10 @@ def do_it_all(_image, _palette):
     plt.show()
 
 
-image = plt.imread('0009.png')
-image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-image2 = img_as_float(plt.imread('0016.jpg'))
+image = img_as_float(plt.imread('0008.png'))
+# image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+image2 = img_as_float(plt.imread('0014.jpg'))
+print(image.shape)
 
 # Greyscale palette
 greyscalePalette_1bit = np.linspace(0, 1, 2).reshape((2, 1))
@@ -135,8 +136,8 @@ colorPalette_16bit = np.matrix('0,0,0;'
 do_it_all(image, greyscalePalette_1bit)
 do_it_all(image, greyscalePalette_2bit)
 do_it_all(image, greyscalePalette_4bit)
-do_it_all(image2, colorPalette_8bit)
-do_it_all(image2, colorPalette_16bit)
+# do_it_all(image2, colorPalette_8bit)
+# do_it_all(image2, colorPalette_16bit)
 
 # quantize with minimal colors
 colorPalette_special = np.matrix('0.820, 0.318, 0.180;'
@@ -157,12 +158,12 @@ colorPalette_special = np.matrix('0.820, 0.318, 0.180;'
                                  '0.812, 0.235, 0.165;'
                                  '0.655, 0.220, 0.141')
 
-ax = plt.subplot(1, 2, 1)
-ax.set_axis_off()
-plt.imshow(image2)
-
-ax = plt.subplot(1, 2, 2)
-ax.set_axis_off()
-plt.imshow(quantize(image2, colorPalette_special))
-
-plt.show()
+# ax = plt.subplot(1, 2, 1)
+# ax.set_axis_off()
+# plt.imshow(image2)
+#
+# ax = plt.subplot(1, 2, 2)
+# ax.set_axis_off()
+# plt.imshow(quantize(image2, colorPalette_special))
+#
+# plt.show()
