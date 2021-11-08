@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<script defer src="todo.js"></script>
+<html>
+<head>
+    <link rel="stylesheet" href="todo.css">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <div class="TODO">
+    <h1>TODO List</h1>
+    <table id="mainTable">
+    <tr class="searchRow">
+      <td class="col1"><input class="listInput" type="text" id="codeInput" placeholder="Code..."></td>
+      <td class="col2"><input class="listInput" type="text" id="taskInput" placeholder="Task..."></td>
+      <td class="col3"><input class="listInput" type="date" id="dateInput" placeholder="Deadline..."></td>
+      <td class="col4">
+        <span onclick="filterElements()" class="listButton">
+          <i class="fa fa-search"></i>
+        </span>
+        <span onclick="clearSearch()" class="listButton">Clear</span>
+      </td>
+    </tr>
+    <tr class="elementRow">
+      <td class="col1">D99</td>
+      <td class="col2">Do the TODO list, duh...</td>
+      <td class="col3">10.11.2021</td>
+    </tr>
+    </table>
+    <table>
+      <tr id="addNewRow">
+        <td class="col1"><input id="inputCode" class="listInput" type="text" id="codeInput" placeholder="Code..."></td>
+        <td class="col2"><input id="inputTask" class="listInput" type="text" id="taskInput" placeholder="Task..."></td>
+        <td class="col3"><input id="inputDate" class="listInput" type="date" id="dateInput" placeholder="Deadline..."></td>
+        <td class="col4">
+          <span id="addButton" onclick="addElement()" class="listButton">Add</span>
+          <span onclick="clearInput()" class="listButton">Clear</span>
+        </td>
+      </tr>
+    </table>
+  </div>
+</body>
