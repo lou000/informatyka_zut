@@ -178,7 +178,36 @@ td{
   font-size: 18px;
 }
 @media only screen and (max-width: 800px) {
+  input[type="text"]
+  {
+      font-size:12px;
+  }
+  input[type="date"]
+  {
+      font-size:12px;
+  }
+
+  .searchRow .col1 {
+    display: none;
+  }
+  .searchRow .col3 {
+    display: none;
+  }
+  .searchRow .mainButton[id="clearSearchBtn"] {
+    display: none;
+  }
+  .searchRow .mainButton[id="searchBtn"] {
+    width: 90%;
+  }
+  .searchRow .col2 {
+    width: 80%;
+  }
+  .searchRow .col4 {
+    width: 20%;
+  }
+
   .TODO {
+    font-size: 12px;
     width: 90%;
     min-width: 0;
   }

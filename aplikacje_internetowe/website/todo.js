@@ -12,7 +12,7 @@ Date.prototype.isValid = function ()
     return this.getTime() === this.getTime();
 };
 
-
+var mainTable = document.getElementById("mainTable")
 var alertBox = document.getElementById("alert")
 var alertText = document.getElementById("alertText")
 
@@ -71,32 +71,55 @@ function validateInput(code, task, date)
 function restoreRows()
 {
     // Go through all the tasks in storage and create rows
-    var mainTable = document.getElementById("mainTable")
     var tasks = JSON.parse(localStorage.getItem("tasks"));
     for(let i = 0; i<tasks.length; i++)
         mainTable.appendChild(createRow(tasks[i].code, tasks[i].task, tasks[i].date));
 }
 
+
+var codeSearch = document.getElementById("codeSearch")
+var taskSearch = document.getElementById("taskSearch")
+var dateSearch = document.getElementById("dateSearch")
+
+codeSearch.addEventListener('input', function (evt) {
+    filterElements();
+});
+taskSearch.addEventListener('input', function (evt) {
+    filterElements();
+});
+dateSearch.addEventListener('input', function (evt) {
+    filterElements();
+});
+
 function filterElements()
 {
-    var mainTable = document.getElementById("mainTable")
-    var code = document.getElementById("codeSearch").value;
-    var task = document.getElementById("taskSearch").value;
-    var date = document.getElementById("dateSearch").value;
+    var b = document.getElementById("clearSearchBtn")
+    if(window.getComputedStyle(b).display === "none")
+    {
+        filterElementsMobile();
+        return;
+    }
+
+    var code = codeSearch.value;
+    var task = taskSearch.value;
+    var date = dateSearch.value;
+
+    for (let i = 0; i<mainTable.children.length; i++)
+        mainTable.children[i].style.display = "";
 
     // Hide elements that match code
     if(code !== "")
-        for (let i = 1; i<mainTable.children.length; i++) 
+        for (let i = 0; i<mainTable.children.length; i++) 
         {
-            if(mainTable.children[i].children[0].textContent.toUpperCase() !== code.toUpperCase())
+            if(!mainTable.children[i].children[0].textContent.toUpperCase().includes(code.toUpperCase()))
                 mainTable.children[i].style.display = "none";
         }
 
     // Hide elements that match task
     if(task !== "")
-        for (let i = 1; i<mainTable.children.length; i++) 
+        for (let i = 0; i<mainTable.children.length; i++) 
         {
-            if(mainTable.children[i].children[1].textContent.toUpperCase() !== task.toUpperCase())
+            if(!mainTable.children[i].children[1].textContent.toUpperCase().includes(task.toUpperCase()))
                 mainTable.children[i].style.display = "none";
         }
 
@@ -105,15 +128,35 @@ function filterElements()
     if(date.isValid())
     {
         date = date.toLocaleDateString()
-        for (let i = 1; i<mainTable.children.length; i++) 
+        for (let i = 0; i<mainTable.children.length; i++) 
         {
             var rowDate = new Date(mainTable.children[i].children[2].id).toLocaleDateString();
             if(rowDate !== date)
-            {
-                console.log(rowDate, date)
                 mainTable.children[i].style.display = "none";
-                console.log("removed")
-            }
+        }
+    }
+}
+
+function filterElementsMobile()
+{
+    var search = taskSearch.value;
+
+    for (let i = 0; i<mainTable.children.length; i++)
+        mainTable.children[i].style.display = "";
+    
+    if(search !== "")
+    {
+        for (let i = 0; i<mainTable.children.length; i++) 
+        {
+            var matches = false;
+            if(mainTable.children[i].children[0].textContent.toUpperCase().includes(search.toUpperCase()))
+                matches = true;
+            if(mainTable.children[i].children[1].textContent.toUpperCase().includes(search.toUpperCase()))
+                matches = true;
+            if(mainTable.children[i].children[2].textContent.toUpperCase().includes(search.toUpperCase()))
+                matches = true;
+            if(!matches)
+                mainTable.children[i].style.display = "none";
         }
     }
 }
@@ -121,12 +164,11 @@ function filterElements()
 function clearSearch()
 {
     // Clear search input and restore all rows
-    var mainTable = document.getElementById("mainTable")
-    document.getElementById("codeSearch").value = ""
-    document.getElementById("taskSearch").value = ""
-    document.getElementById("dateSearch").value = ""
+    codeSearch.value = ""
+    taskSearch.value = ""
+    dateSearch.value = ""
 
-    for (let i = 1; i<mainTable.children.length; i++)
+    for (let i = 0; i<mainTable.children.length; i++)
         mainTable.children[i].style.display = "";
 }
 
@@ -184,7 +226,7 @@ function updateLocalStorage()
     const mainTable = document.getElementById("mainTable")
 
     var tasks = []
-    for (let i = 1; i<mainTable.children.length; i++) 
+    for (let i = 0; i<mainTable.children.length; i++) 
     {
         var task = new Task()
         task.code = mainTable.children[i].children[0].textContent

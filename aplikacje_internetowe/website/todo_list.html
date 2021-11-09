@@ -10,18 +10,20 @@
 <body>
   <div class="TODO">
     <h1>TODO List</h1>
-    <table id="mainTable">
+    <table>
     <tr class="searchRow">
       <td class="col1"><input id="codeSearch" class="listInput" type="text" placeholder="Code..."></td>
       <td class="col2"><input id="taskSearch" class="listInput" type="text" placeholder="Task..."></td>
       <td class="col3"><input id="dateSearch" class="listInput" type="date" placeholder="dd-mm-yyyy"></td>
       <td class="col4">
-        <span onclick="filterElements()" class="mainButton">
+        <span id="searchBtn" onclick="filterElements()" class="mainButton">
           <i class="fa fa-search"></i>
         </span>
-        <span onclick="clearSearch()" class="mainButton">Clear</span>
+        <span id="clearSearchBtn" onclick="clearSearch()" class="mainButton">Clear</span>
       </td>
     </tr>
+  </table>
+    <table id="mainTable">
     </table>
     <table>
       <tr id="addNewRow">
