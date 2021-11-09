@@ -150,7 +150,7 @@ function createRow(code, task, date)
     // Date cell
     var col3 = document.createElement("td");
     col3.className = "col3";
-    col3.id = (new Date(date)).toJSON() // The id is used for locale independant date storage
+    col3.id = date === "" ? "" : (new Date(date)).toJSON() // The id is used for locale independant date storage
     var date = date === "" ? "" : new Date(date).toLocaleDateString();
     col3.appendChild(document.createTextNode(date));
     row.appendChild(col3);
