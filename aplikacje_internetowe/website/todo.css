@@ -78,25 +78,6 @@ html {
   padding: 15px;
 }
 
-
-.listButton {
-  padding: 2px;
-  display: flex;
-  background: #e990a3;
-  color: white;
-  border-radius: 2px;
-  float: left;
-  margin: 5%;
-  width: 40%;
-  height: 30px;
-  box-sizing: border-box;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
 .alert {
   padding: 20px;
   position: fixed;
@@ -146,8 +127,26 @@ html {
   transition: 0.3s;
 }
 
+.listButton {
+  padding: 2px;
+  display: flex;
+  background: #e990a3;
+  color: white;
+  border-radius: 2px;
+  float: left;
+  margin: 5%;
+  width: 40%;
+  height: 30px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
 .listButton:hover {
-  background-color: #bbb;
+  background: #bbb;
   font-size: 16px;
 }
 
@@ -171,13 +170,16 @@ html {
 }
 
 .mainButton:hover {
-  background-color: #bbb;
+  background: #bbb;
   font-size: 18px;
 }
 @media only screen and (max-width: 800px) {
   .TODO {
     width: 90%;
     min-width: 0;
+  }
+  h1{
+    font-size: 60px;
   }
   .listButton{
     font-size: 10px;
@@ -186,18 +188,27 @@ html {
     font-size: 10px;  
   }
   .col1 {
-    padding: 3px;
+    text-align: center;
+    padding: 5px;
   }
   
   .col2 {
-    padding: 3px;
+    padding: 5px;
   }
   
   .col3 {
-    padding: 3px;
+    padding: 5px;
   }
   
   .col4 {
-    padding: 3px;
+    padding: 5px;
+  }
+  .listButton:hover {
+    background: #e990a3;
+    font-size: 10px;
+  }
+  .mainButton:hover {
+    background: #82e2eb;
+    font-size: 10px;
   }
 }
