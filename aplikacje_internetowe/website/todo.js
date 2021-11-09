@@ -15,9 +15,15 @@ Date.prototype.isValid = function ()
 function validateInput(code, task, date)
 {
     let valid = true
+
+    // Regex below means one letter uppercase or lowercase and two digits
     const regex = new RegExp('^[a-zA-Z]\\d{2}');
     valid &= regex.test(code);
+
+    // Task has to be between 3 and 255 chars long, inclusive.
     valid &= task.length <= 255 && task.length >= 3;
+
+    // We can have no date or valid date
     if(date !== "")
     {
         date = new Date(date)
@@ -28,6 +34,7 @@ function validateInput(code, task, date)
 
 function restoreRows()
 {
+    // Go through all the tasks in storage and create rows
     var mainTable = document.getElementById("mainTable")
     var tasks = JSON.parse(localStorage.getItem("tasks"));
     for(let i = 0; i<tasks.length; i++)
@@ -77,6 +84,7 @@ function filterElements()
 
 function clearSearch()
 {
+    // Clear search input and restore all rows
     var mainTable = document.getElementById("mainTable")
     document.getElementById("codeSearch").value = ""
     document.getElementById("taskSearch").value = ""
@@ -91,22 +99,26 @@ function createRow(code, task, date)
     var row = document.createElement("tr");
     row.className = "elementRow";
 
+    // Code cell
     var col1 = document.createElement("td");
     col1.className = "col1";
     col1.appendChild(document.createTextNode(code.toUpperCase()));
     row.appendChild(col1);
 
+    // Task cell
     var col2 = document.createElement("td");
     col2.className = "col2";
     col2.appendChild(document.createTextNode(task));
     row.appendChild(col2);
 
+    // Date cell
     var col3 = document.createElement("td");
     col3.className = "col3";
     var date = date === "" ? "" : new Date(date).toLocaleDateString();
     col3.appendChild(document.createTextNode(date));
     row.appendChild(col3);
 
+    // Buttons
     var col4 = document.createElement("td");
     col4.className = "col4";
     var span1 = document.createElement("span");
@@ -130,6 +142,8 @@ function createRow(code, task, date)
 
 function updateLocalStorage()
 {
+    // We do this everytime we make any change, this is incredibly inefficiant
+    // but no user will ever create enough tasks for it to matter
     const mainTable = document.getElementById("mainTable")
 
     var tasks = []
@@ -151,35 +165,6 @@ function removeElement()
     updateLocalStorage();
 }
 
-function editElement()
-{
-    editedRow = this.parentElement.parentElement;
-    editedRow.style.backgroundColor = "#A4E5EB";
-    btn = document.getElementById("addButton");
-    btn.textContent = "Apply"
-    document.getElementById("inputCode").value = editedRow.children[0].textContent;
-    document.getElementById("inputTask").value = editedRow.children[1].textContent;
-    date = new Date(editedRow.children[2].textContent);
-    
-    var month = ('0' + (date.getMonth() + 1)).slice(-2)
-    var day = ('0' + date.getDate()).slice(-2) 
-    var godHelpMe = date.getFullYear()+"-"+month+"-"+day
-    console.log(date, editedRow.children[2].textContent, day, month, godHelpMe)
-
-    document.getElementById("inputDate").value = godHelpMe;
-}
-
-function stopEditing()
-{
-    if(editedRow)
-    {
-    editedRow.style.backgroundColor = "white";
-    editedRow = null;
-    btn = document.getElementById("addButton");
-    btn.textContent = "Add"
-    }
-}
-
 function addElement()
 {
     var mainTable = document.getElementById("mainTable")
@@ -196,6 +181,37 @@ function addElement()
         clearInput();
     }
     updateLocalStorage();
+}
+
+function editElement()
+{
+    editedRow = this.parentElement.parentElement;
+    editedRow.style.backgroundColor = "#A4E5EB";
+    btn = document.getElementById("addButton");
+    btn.textContent = "Apply"
+    document.getElementById("inputCode").value = editedRow.children[0].textContent;
+    document.getElementById("inputTask").value = editedRow.children[1].textContent;
+    date = new Date(editedRow.children[2].textContent);
+    
+    // This below is the date conversion that is required by the <input type="date">
+    // This does not bring joy...
+
+    var month = ('0' + (date.getMonth() + 1)).slice(-2)
+    var day = ('0' + date.getDate()).slice(-2) 
+    var godHelpMe = date.getFullYear()+"-"+month+"-"+day;
+
+    document.getElementById("inputDate").value = godHelpMe;
+}
+
+function stopEditing()
+{
+    if(editedRow)
+    {
+        editedRow.style.backgroundColor = "white";
+        editedRow = null;
+        btn = document.getElementById("addButton");
+        btn.textContent = "Add"
+    }
 }
 
 function clearInput()
