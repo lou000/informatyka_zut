@@ -58,6 +58,10 @@ html {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.55);
 }
 
+td{
+  word-wrap: break-word;
+}
+
 .col1 {
   width: 15%;
   padding: 15px;
