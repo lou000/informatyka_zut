@@ -1,18 +1,99 @@
 class Task {
-    constructor(code, task, date) {
+    constructor(code, task, date) 
+    {
         this.code = code;
         this.task = task;
         this.date = date;
       }
 }
 
-function createRow(code, task, date){
+Date.prototype.isValid = function () 
+{
+    return this.getTime() === this.getTime();
+};
+
+function validateInput(code, task, date)
+{
+    let valid = true
+    const regex = new RegExp('^[a-zA-Z]\\d{2}');
+    valid &= regex.test(code);
+    valid &= task.length <= 255 && task.length >= 3;
+    if(date !== "")
+    {
+        date = new Date(date)
+        valid &= date.isValid();
+    }
+    return valid;
+}
+
+function restoreRows()
+{
+    var mainTable = document.getElementById("mainTable")
+    var tasks = JSON.parse(localStorage.getItem("tasks"));
+    for(let i = 0; i<tasks.length; i++)
+        mainTable.appendChild(createRow(tasks[i].code, tasks[i].task, tasks[i].date));
+}
+
+function filterElements()
+{
+    var mainTable = document.getElementById("mainTable")
+    var code = document.getElementById("codeSearch").value;
+    var task = document.getElementById("taskSearch").value;
+    var date = document.getElementById("dateSearch").value;
+
+    // Hide elements that match code
+    if(code !== "")
+        for (let i = 1; i<mainTable.children.length; i++) 
+        {
+            if(mainTable.children[i].children[0].textContent.toUpperCase() !== code.toUpperCase())
+                mainTable.children[i].style.display = "none";
+        }
+
+    // Hide elements that match task
+    if(task !== "")
+        for (let i = 1; i<mainTable.children.length; i++) 
+        {
+            if(mainTable.children[i].children[1].textContent.toUpperCase() !== task.toUpperCase())
+                mainTable.children[i].style.display = "none";
+        }
+
+    // Hide elements that match date
+    date = new Date(date)
+    if(date.isValid())
+    {
+        date = date.toLocaleDateString()
+        for (let i = 1; i<mainTable.children.length; i++) 
+        {
+            var rowDate = new Date(mainTable.children[i].children[2].textContent).toLocaleDateString();
+            if(rowDate !== date)
+            {
+                console.log(rowDate, date)
+                mainTable.children[i].style.display = "none";
+                console.log("removed")
+            }
+        }
+    }
+}
+
+function clearSearch()
+{
+    var mainTable = document.getElementById("mainTable")
+    document.getElementById("codeSearch").value = ""
+    document.getElementById("taskSearch").value = ""
+    document.getElementById("dateSearch").value = ""
+
+    for (let i = 1; i<mainTable.children.length; i++)
+        mainTable.children[i].style.display = "";
+}
+
+function createRow(code, task, date)
+{
     var row = document.createElement("tr");
     row.className = "elementRow";
 
     var col1 = document.createElement("td");
     col1.className = "col1";
-    col1.appendChild(document.createTextNode(code));
+    col1.appendChild(document.createTextNode(code.toUpperCase()));
     row.appendChild(col1);
 
     var col2 = document.createElement("td");
@@ -22,6 +103,7 @@ function createRow(code, task, date){
 
     var col3 = document.createElement("td");
     col3.className = "col3";
+    var date = date === "" ? "" : new Date(date).toLocaleDateString();
     col3.appendChild(document.createTextNode(date));
     row.appendChild(col3);
 
@@ -31,6 +113,7 @@ function createRow(code, task, date){
     var span2 = document.createElement("span");
     var icon = document.createElement("i");
     span1.className = "listButton edit";
+    span1.onclick = editElement;
     span2.className = "listButton close";
     span2.onclick = removeElement;
     icon.className  = "fa fa-times";
@@ -45,44 +128,84 @@ function createRow(code, task, date){
     return row
 }
 
-function updateLocalStorage(){
+function updateLocalStorage()
+{
     const mainTable = document.getElementById("mainTable")
 
     var tasks = []
-    for (let i = 0; i<mainTable.children.length; i++) 
+    for (let i = 1; i<mainTable.children.length; i++) 
     {
         var task = new Task()
-        if(mainTable.children[i].className === "elementRow")
-        {
-            
-            task.code = mainTable.children[i].children[0].textContent
-            task.task = mainTable.children[i].children[1].textContent
-            task.date = mainTable.children[i].children[2].textContent
-            console.log(task)
-            tasks.push(task)
-        }
+        task.code = mainTable.children[i].children[0].textContent
+        task.task = mainTable.children[i].children[1].textContent
+        task.date = mainTable.children[i].children[2].textContent
+        tasks.push(task)
     }
     localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
-function removeElement() {
+function removeElement() 
+{
     var div = this.parentElement.parentElement;
     div.parentNode.removeChild(div);
     updateLocalStorage();
 }
 
-document.getElementById("addButton").onclick = addElement;
-function addElement(){
+function editElement()
+{
+    editedRow = this.parentElement.parentElement;
+    editedRow.style.backgroundColor = "#A4E5EB";
+    btn = document.getElementById("addButton");
+    btn.textContent = "Apply"
+    document.getElementById("inputCode").value = editedRow.children[0].textContent;
+    document.getElementById("inputTask").value = editedRow.children[1].textContent;
+    date = new Date(editedRow.children[2].textContent);
+    
+    var month = ('0' + (date.getMonth() + 1)).slice(-2)
+    var day = ('0' + date.getDate()).slice(-2) 
+    var godHelpMe = date.getFullYear()+"-"+month+"-"+day
+    console.log(date, editedRow.children[2].textContent, day, month, godHelpMe)
+
+    document.getElementById("inputDate").value = godHelpMe;
+}
+
+function stopEditing()
+{
+    if(editedRow)
+    {
+    editedRow.style.backgroundColor = "white";
+    editedRow = null;
+    btn = document.getElementById("addButton");
+    btn.textContent = "Add"
+    }
+}
+
+function addElement()
+{
     var mainTable = document.getElementById("mainTable")
     var code = document.getElementById("inputCode").value;
     var task = document.getElementById("inputTask").value;
     var date = document.getElementById("inputDate").value;
-    mainTable.appendChild(createRow(code, task, date));
+    if(!validateInput(code, task, date))
+        return;
+    if(!editedRow)
+        mainTable.appendChild(createRow(code, task, date));
+    else
+    {
+        editedRow.parentNode.replaceChild(createRow(code, task, date), editedRow);
+        clearInput();
+    }
     updateLocalStorage();
 }
 
-function clearInput(){
+function clearInput()
+{
     document.getElementById("inputCode").value = ""
     document.getElementById("inputTask").value = ""
     document.getElementById("inputDate").value = ""
+    stopEditing();
 }
+
+
+var editedRow = null;
+restoreRows();

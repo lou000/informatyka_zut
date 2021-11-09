@@ -1,8 +1,9 @@
-
 * {
   box-sizing: border-box;
 }
-body, html {
+
+body,
+html {
   height: 100%;
   width: 100%;
   margin: 0px;
@@ -10,7 +11,7 @@ body, html {
   background-size: cover;
 }
 
-.menu a{
+.menu a {
   text-decoration: none;
   color: inherit;
   display: flex;
@@ -35,8 +36,8 @@ body, html {
 }
 
 img {
-    max-width: 100%;
-    max-height: 100%;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 html {
@@ -44,38 +45,39 @@ html {
 }
 
 h1 {
-    mix-blend-mode: screen;
-    background-color: white;
-    font-family: 'Lato', sans-serif;
-    font-size: 100px;
-    font-weight: bold;
-    letter-spacing: -1px;
-    line-height: 1.2;
-    text-align: center;
+  mix-blend-mode: screen;
+  background-color: white;
+  font-family: 'Lato', sans-serif;
+  font-size: 100px;
+  font-weight: bold;
+  letter-spacing: -1px;
+  line-height: 1.2;
+  text-align: center;
 }
 
 h2 {
-    color: #2E2F31;
-    font-family: "Lato", sans-serif;
-    font-size: 30px;
-    font-weight: bold;
-    line-height: 32px;
-    margin: 0 0 72px;
-    text-align: center;
+  color: #2E2F31;
+  font-family: "Lato", sans-serif;
+  font-size: 30px;
+  font-weight: bold;
+  line-height: 32px;
+  margin: 0 0 72px;
+  text-align: center;
 }
 
-h3 { color: black;
-    font-family: 'Lucida Sans', sans-serif;
-    font-size: 15px;
-    font-weight: bolder;
-    display:inline
+h3 {
+  color: black;
+  font-family: 'Lucida Sans', sans-serif;
+  font-size: 15px;
+  font-weight: bolder;
+  display: inline
 }
 
 .header-image {
   background: url("banner.jpg") no-repeat center center fixed;
   background-size: cover;
   height: 100%;
-  align-items:center;
+  align-items: center;
   overflow: visible;
   padding: 20%
 }
@@ -103,7 +105,7 @@ h3 { color: black;
   text-align: center;
   background-color: #495760;
   color: #ffffff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 
 .menu li:hover {
@@ -111,7 +113,7 @@ h3 { color: black;
 }
 
 .aside img {
-    filter: grayscale(0.9);
+  filter: grayscale(0.9);
 }
 
 .aside {
@@ -121,7 +123,7 @@ h3 { color: black;
   height: 800px;
   text-align: center;
   font-size: 14px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 
 .footer {
@@ -138,7 +140,13 @@ h3 { color: black;
 }
 
 @media only screen and (min-width: 1300px) {
+
   /* For desktop: */
-  .col-1 {width: 15%;}
-  .col-2 {width: 52%;}
+  .col-1 {
+    width: 15%;
+  }
+
+  .col-2 {
+    width: 52%;
+  }
 }

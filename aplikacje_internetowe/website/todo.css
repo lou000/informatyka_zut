@@ -1,109 +1,132 @@
 h1 {
-    mix-blend-mode: screen;
-    background-color: white;
-    font-family: 'Lato', sans-serif;
-    font-size: 100px;
-    font-weight: bold;
-    letter-spacing: -1px;
-    line-height: 1.2;
-    text-align: center;
+  mix-blend-mode: screen;
+  background-color: white;
+  font-family: 'Lato', sans-serif;
+  font-size: 100px;
+  font-weight: bold;
+  letter-spacing: -1px;
+  line-height: 1.2;
+  text-align: center;
 }
 
-body, html {
-    height: 100%;
-    width: 100%;
-    margin: 0px;
-    background: url("todo_bg.jpg") no-repeat center center fixed;
-    background-size: cover;
-  }
+body,
+html {
+  height: 100%;
+  width: 100%;
+  margin: 0px;
+  background: url("todo_bg.jpg") no-repeat center center fixed;
+  background-size: cover;
+}
 
 
 .TODO {
-    overflow-x:auto;
-    margin: auto;
-    width: 50%;
-    padding: 20px;
+  overflow-x: auto;
+  margin: auto;
+  width: 50%;
+  min-width: 750px;
+  padding: 20px;
 }
 
-.listInput{
-    box-sizing: border-box;
-    border: none;
-    margin: auto;
-    border-radius: 5px;
-    width: 100%;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    font-size: 16px;
-    font-family: inherit;
-    color: gray;
-}
-
-.TODO table{
-    border-radius: 10px;
-    margin: auto;
-    margin-bottom: 50px;
-    margin-top: 50px;
-    border-collapse: collapse;
-    table-layout: fixed;
-    font-size: 0.9em;
-    width: 100%;
-    height: 100%;
-    background-color: white;
-    font-family: sans-serif;
-    min-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.55);
-}
-
-.col1{
-    width: 10%;
-    padding: 15px;
-}
-.col2{
-    width: 55%;
-    padding: 15px;
-}
-.col3{
-    width: 20%;
-    padding: 15px;
-}
-.col4{
-    width: 15%;
-    padding: 15px;
-}
-
-.addBtn {
-    padding: 10px;
-    background: #d9d9d9;
-    border-radius: 5px;
-    color: #555;
-    float: left;
-    width: 100%;
-    box-sizing: border-box;
-    text-align: center;
-    font-size: 16px;
-    cursor: pointer;
-    transition: 0.3s;
+@media only screen and (max-width: 800px) {
+  .TODO {
+    width: 90%;
+    min-width: 0;
   }
-  
-  .addBtn:hover {
-    background-color: #bbb;
-  }
+}
 
-  .listButton {
-    padding: 2px;
-    background: #d9d9d9;
-    border-radius: 2px;
-    color: #555;
-    float: left;
-    margin: 5%;
-    width: 40%;
-    height: 100%;
-    box-sizing: border-box;
-    text-align: center;
-    font-size: 14px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  .listButton:hover {
-    background-color: #bbb;
-  }
+.listInput {
+  box-sizing: border-box;
+  border: none;
+  margin: auto;
+  border-radius: 5px;
+  width: 100%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-size: 16px;
+  font-family: inherit;
+  color: gray;
+}
+
+.TODO table {
+  border-radius: 10px;
+  margin: auto;
+  margin-bottom: 50px;
+  margin-top: 50px;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 0.9em;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  font-family: sans-serif;
+  min-width: 450px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.55);
+}
+
+.col1 {
+  width: 10%;
+  padding: 15px;
+}
+
+.col2 {
+  width: 40%;
+  padding: 15px;
+}
+
+.col3 {
+  width: 25%;
+  padding: 15px;
+}
+
+.col4 {
+  width: 25%;
+  padding: 15px;
+}
+
+
+.listButton {
+  padding: 2px;
+  display: flex;
+  background: #e990a3;
+  color: white;
+  border-radius: 2px;
+  float: left;
+  margin: 5%;
+  width: 40%;
+  height: 30px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.listButton:hover {
+  background-color: #bbb;
+  font-size: 16px;
+}
+
+.mainButton {
+  color: white;
+  padding: 2px;
+  display: flex;
+  background: #82e2eb;
+  border-radius: 2px;
+  float: left;
+  margin: 5%;
+  width: 40%;
+  height: 40px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.mainButton:hover {
+  background-color: #bbb;
+  font-size: 18px;
+}
