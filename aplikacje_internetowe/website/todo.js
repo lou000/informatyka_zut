@@ -71,7 +71,7 @@ function filterElements()
         date = date.toLocaleDateString()
         for (let i = 1; i<mainTable.children.length; i++) 
         {
-            var rowDate = new Date(mainTable.children[i].children[2].textContent).toLocaleDateString();
+            var rowDate = new Date(mainTable.children[i].children[2].id).toLocaleDateString();
             if(rowDate !== date)
             {
                 console.log(rowDate, date)
@@ -114,6 +114,7 @@ function createRow(code, task, date)
     // Date cell
     var col3 = document.createElement("td");
     col3.className = "col3";
+    col3.id = (new Date(date)).toJSON() // The id is used for locale independant date storage
     var date = date === "" ? "" : new Date(date).toLocaleDateString();
     col3.appendChild(document.createTextNode(date));
     row.appendChild(col3);
@@ -152,7 +153,7 @@ function updateLocalStorage()
         var task = new Task()
         task.code = mainTable.children[i].children[0].textContent
         task.task = mainTable.children[i].children[1].textContent
-        task.date = mainTable.children[i].children[2].textContent
+        task.date = mainTable.children[i].children[2].id // json date is stored in id
         tasks.push(task)
     }
     localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -191,7 +192,7 @@ function editElement()
     btn.textContent = "Apply"
     document.getElementById("inputCode").value = editedRow.children[0].textContent;
     document.getElementById("inputTask").value = editedRow.children[1].textContent;
-    date = new Date(editedRow.children[2].textContent);
+    date = new Date(editedRow.children[2].id);
     
     // This below is the date conversion that is required by the <input type="date">
     // This does not bring joy...
