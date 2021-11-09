@@ -12,23 +12,59 @@ Date.prototype.isValid = function ()
     return this.getTime() === this.getTime();
 };
 
+
+var alertBox = document.getElementById("alert")
+var alertText = document.getElementById("alertText")
+
+alertBox.addEventListener("animationend", (ev) => {
+    if (ev.type === "animationend" && ev.animationName === "fadeOut") 
+        alertBox.style.display = "none";
+}, false);
+
+function showAlert(text)
+{
+    alertText.innerHTML = text;
+    alertBox.style.display = "block";
+    alertBox.classList.toggle('active');
+}
+
+function alertClose()
+{
+    alertBox.classList.toggle('active');
+}
+
 function validateInput(code, task, date)
 {
     let valid = true
+    var errorText = ""
 
     // Regex below means one letter uppercase or lowercase and two digits
     const regex = new RegExp('^[a-zA-Z]\\d{2}');
-    valid &= regex.test(code);
+    if(!regex.test(code))
+    {
+        valid = false;
+        errorText += "Error: Invalid code input, code has to comprise of one letter and two digits.<br/>"
+    }
 
     // Task has to be between 3 and 255 chars long, inclusive.
-    valid &= task.length <= 255 && task.length >= 3;
+    if(!(task.length <= 255 && task.length >= 3))
+    {
+        valid = false;
+        errorText += "Error: Invalid task input, task has to be between 3 and 255 characters long (inclusive).<br/>"
+    }
 
     // We can have no date or valid date
     if(date !== "")
     {
         date = new Date(date)
-        valid &= date.isValid();
+        if(!date.isValid())
+        {
+            valid = false;
+            errorText += "Error: Invalid code input, code has to comprise of one letter and two digits.<br/>"
+        }
     }
+    if(!valid)
+        showAlert(errorText)
     return valid;
 }
 
