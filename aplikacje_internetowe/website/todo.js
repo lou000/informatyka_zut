@@ -39,7 +39,7 @@ function validateInput(code, task, date)
     var errorText = ""
 
     // Regex below means one letter uppercase or lowercase and two digits
-    const regex = new RegExp('^[a-zA-Z]\\d{2}');
+    const regex = /^[a-zA-Z]([0-9]{2})$/;
     if(!regex.test(code))
     {
         valid = false;
