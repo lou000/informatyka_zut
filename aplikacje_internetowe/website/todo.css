@@ -28,12 +28,7 @@ html {
   padding: 20px;
 }
 
-@media only screen and (max-width: 800px) {
-  .TODO {
-    width: 90%;
-    min-width: 0;
-  }
-}
+
 
 .listInput {
   box-sizing: border-box;
@@ -59,17 +54,17 @@ html {
   width: 100%;
   height: 100%;
   background-color: white;
-  min-width: 450px;
+  min-width: 200px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.55);
 }
 
 .col1 {
-  width: 10%;
+  width: 15%;
   padding: 15px;
 }
 
 .col2 {
-  width: 40%;
+  width:35%;
   padding: 15px;
 }
 
@@ -178,4 +173,31 @@ html {
 .mainButton:hover {
   background-color: #bbb;
   font-size: 18px;
+}
+@media only screen and (max-width: 800px) {
+  .TODO {
+    width: 90%;
+    min-width: 0;
+  }
+  .listButton{
+    font-size: 10px;
+  }
+  .mainButton{
+    font-size: 10px;  
+  }
+  .col1 {
+    padding: 3px;
+  }
+  
+  .col2 {
+    padding: 3px;
+  }
+  
+  .col3 {
+    padding: 3px;
+  }
+  
+  .col4 {
+    padding: 3px;
+  }
 }
