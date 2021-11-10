@@ -84,7 +84,7 @@ function validateInput(code, task, date)
         if(!date.isValid())
         {
             valid = false;
-            errorText += "Error: Invalid code input, code has to comprise of one letter and two digits.<br/>"
+            errorText += "Error: Invalid date input.<br/>"
         }
     }
     if(!valid)
