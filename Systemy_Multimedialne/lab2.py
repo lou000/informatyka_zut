@@ -72,7 +72,7 @@ def plot_freq_change(_data, _old_freq, _new_freq, _time_ms):
 
 
 rcParams['figure.figsize'] = 10, 10
-data, freq = sf.read('sounds/sin_8000Hz.wav', dtype=np.int32)
+data, freq = sf.read('sounds/sing_low1.wav', dtype=np.int32)
 print(freq, data.shape)
 if len(data.shape) > 1:
     data = data[:, 0]
@@ -84,14 +84,28 @@ ms = 100
 # plot_sound(quantize(data, 24), freq, ms, "Quantization 24 bit")
 
 # plot_sound(decimate(data, int(freq / 2000)), 2000, 1000)
-plot_freq_change(data, freq, 80 , ms)
-plot_freq_change(data, freq, 4000 , ms)
-plot_freq_change(data, freq, 8000 , ms)
-plot_freq_change(data, freq, 16000, ms)
-plot_freq_change(data, freq, 24000, ms)
-plot_freq_change(data, freq, 41000, ms)
-plot_freq_change(data, freq, 16950, ms)
+# plot_freq_change(data, freq, 2000 , ms)
+# plot_freq_change(data, freq, 4000 , ms)
+# plot_freq_change(data, freq, 8000 , ms)
+# plot_freq_change(data, freq, 16000, ms)
+# plot_freq_change(data, freq, 24000, ms)
+# plot_freq_change(data, freq, 41000, ms)
+# plot_freq_change(data, freq, 16950, ms)
 
 
+sd.play(data, samplerate=freq, blocking=True)
+sd.play(quantize(data, 4), samplerate=freq, blocking=True)
+sd.play(quantize(data, 8), samplerate=freq, blocking=True)
+sd.play(quantize(data, 16), samplerate=freq, blocking=True)
+sd.play(quantize(data, 24), samplerate=freq, blocking=True)
+
+frequencies = [2000, 4000, 8000, 16000, 24000, 41000, 16950]
+
+for new_freq in frequencies:
+    sd.play(decimate(data, int(freq/new_freq)), samplerate=new_freq, blocking=True)
+for new_freq in frequencies:
+    sd.play(interp_signal(data, freq, new_freq, "linear"), samplerate=new_freq, blocking=True)
+for new_freq in frequencies:
+    sd.play(interp_signal(data, freq, new_freq, "cubic"), samplerate=new_freq, blocking=True)
 
 
