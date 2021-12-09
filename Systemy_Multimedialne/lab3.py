@@ -103,17 +103,6 @@ def decodeRLE(data):
     return newData
 
 
-def joinQuadrants(top_left, top_right, bottom_left, bottom_right):
-    if top_right is None:
-        return np.concatenate((top_left, bottom_left), axis=0)
-    elif bottom_left is None:
-        return np.concatenate((top_left, top_right), axis=1)
-
-    top = np.concatenate((top_left, top_right), axis=1)
-    bottom = np.concatenate((bottom_left, bottom_right), axis=1)
-    return np.concatenate((top, bottom))
-
-
 Node = namedtuple("Node", "color final level resolution topleft topright bottomleft bottomright")
 nodeCount = 0
 
@@ -150,6 +139,17 @@ def createQuadTree(img, maxLevel=-1, level=0):
     return Node(color, final, level, resolution, topleft, topright, bottomleft, bottomright)
 
 
+def joinQuadrants(top_left, top_right, bottom_left, bottom_right):
+    if top_right is None:
+        return np.concatenate((top_left, bottom_left), axis=0)
+    elif bottom_left is None:
+        return np.concatenate((top_left, top_right), axis=1)
+
+    top = np.concatenate((top_left, top_right), axis=1)
+    bottom = np.concatenate((bottom_left, bottom_right), axis=1)
+    return np.concatenate((top, bottom))
+
+
 def getImageFromTree(node, level=-1):
     if node is None:
         return None
@@ -160,7 +160,7 @@ def getImageFromTree(node, level=-1):
                              getImageFromTree(node.bottomleft, level), getImageFromTree(node.bottomright, level)).astype(int)
 
 
-image = (plt.imread('pics/scan.png')*255).astype(int)
+image = (plt.imread('pics/photo.jpg')).astype(int)
 _ax = plt.subplot(3, 1, 1)
 _ax.set_axis_off()
 _ax.set_title('Original')
@@ -173,6 +173,7 @@ compressed = encodeRLE(image)
 rleSize = get_size(compressed)
 print('Compressed size:   ', rleSize)
 decompressed = decodeRLE(compressed)
+assert (image == decompressed).all
 print('Decompressed size: ', get_size(decompressed))
 print('Compression level: ', round(origSize / rleSize, 2))
 print('Compression pct:   ', round(100 * rleSize / origSize, 2))
@@ -183,6 +184,7 @@ compressedQuad = createQuadTree(image)
 treeSize = get_size(compressedQuad)
 print('Compressed size:   ', treeSize, '   nodeCount:  ', nodeCount, '   avgNodeSize: ', int(treeSize/nodeCount))
 decompressedQuad = getImageFromTree(compressedQuad)
+assert (image == decompressedQuad).all
 print('Decompressed size: ', get_size(decompressedQuad))
 print('Compression level: ', round(origSize / treeSize, 2))
 print('Compression pct:   ', round(100 * treeSize / origSize, 2))
@@ -196,4 +198,21 @@ _ax = plt.subplot(3, 1, 3)
 _ax.set_axis_off()
 _ax.set_title('QuadTree')
 plt.imshow(decompressedQuad)
+plt.show()
+
+
+_ax = plt.subplot(1, 3, 1)
+_ax.set_axis_off()
+_ax.set_title('Level 3')
+plt.imshow(getImageFromTree(compressedQuad, 3))
+
+_ax = plt.subplot(1, 3, 2)
+_ax.set_axis_off()
+_ax.set_title('Level 7')
+plt.imshow(getImageFromTree(compressedQuad, 7))
+
+_ax = plt.subplot(1, 3, 3)
+_ax.set_axis_off()
+_ax.set_title('Level Maximum')
+plt.imshow(getImageFromTree(compressedQuad))
 plt.show()
