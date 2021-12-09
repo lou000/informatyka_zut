@@ -3,9 +3,30 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+# Original get_size function does not behave well with ndarray types,
+# sys getsizeof returnes full size of array if its a direct reference,
+# but it returns only the size of the array object when its a slice of an array
+
+# test for yourself:
+#
+# arr = np.empty(1000)
+# print(sys.getsizeof(arr))
+# arr = arr[::]
+# print(sys.getsizeof(arr))
+#
+# i modified the function below to exclude sys.getsizeof from ndarray calculation
+# this omits the size of ndarray container from the calculations
+
 def get_size(obj, seen=None):
     """Recursively finds size of objects"""
-    size = sys.getsizeof(obj)
+    # this is old code
+    # size = sys.getsizeof(obj)
+
+    # this is modified to properly work with ndarray views
+    size = 0
+    if not isinstance(obj, np.ndarray):
+        size += sys.getsizeof(obj)
+
     if seen is None:
         seen = set()
     obj_id = id(obj)
@@ -52,7 +73,8 @@ def encodeRLE(_data):
         newData[newDataIndex+1] = current_bit
         newDataIndex += 2
 
-    return newData[:newDataIndex]
+    newData = newData[:newDataIndex].copy()
+    return newData
 
 
 def decodeRLE(data):
@@ -66,12 +88,11 @@ def decodeRLE(data):
     shape = tuple(shape.astype(int))
 
     newData = np.empty(int(size)).astype(data.dtype)
-
     currentIndex = shpCount + 1
     newDataIndex = 0
     while currentIndex < data.shape[0]:
         n_repeats = data[currentIndex]
-        for i in range(0, n_repeats):
+        for i in range(0, n_repeats.astype(int)):
             newData[newDataIndex] = data[currentIndex+1]
             newDataIndex += 1
         currentIndex += 2
@@ -80,18 +101,20 @@ def decodeRLE(data):
     return newData
 
 
-image = (plt.imread('pics/0016.jpg'))
-print(image.shape)
+image = (plt.imread('pics/0008.png')*255).astype(int)
 _ax = plt.subplot(1, 2, 1)
 _ax.set_axis_off()
 _ax.set_title('Original')
 plt.imshow(image)
 
+print('------------RLE------------')
 print('Original size:     ', get_size(image))
 compressed = encodeRLE(image)
 print('Compressed size:   ', get_size(compressed))
 decompressed = decodeRLE(compressed)
 print('Decompressed size: ', get_size(decompressed))
+
+print('---------QuadTree----------')
 
 _ax = plt.subplot(1, 2, 2)
 _ax.set_axis_off()
