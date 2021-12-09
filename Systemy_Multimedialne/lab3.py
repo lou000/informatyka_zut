@@ -32,7 +32,7 @@ def encodeRLE(_data):
     data = data.flatten()
 
     # preallocate and encode shape at the start
-    newData = np.empty(data.shape[0] * 2 + len(shape) + 1)
+    newData = np.empty(data.shape[0] * 2 + len(shape) + 1).astype(_data.dtype)
     newData[0] = len(shape)
     shapeIndex = 0
     for shp in shape:
@@ -55,21 +55,47 @@ def encodeRLE(_data):
     return newData[:newDataIndex]
 
 
-
 def decodeRLE(data):
-    shape = data.shape
-    data.flatten()
+    shpCount = data[0].astype(int)
+    shape = np.empty(shpCount)
+
+    size = 1
+    for i in range(0, shpCount):
+        shape[i] = data[i+1]
+        size *= shape[i]
+    shape = tuple(shape.astype(int))
+
+    newData = np.empty(int(size)).astype(data.dtype)
+
+    currentIndex = shpCount + 1
+    newDataIndex = 0
+    while currentIndex < data.shape[0]:
+        n_repeats = data[currentIndex]
+        for i in range(0, n_repeats):
+            newData[newDataIndex] = data[currentIndex+1]
+            newDataIndex += 1
+        currentIndex += 2
+
+    newData = np.reshape(newData, shape).astype(data.dtype)  # numpy keeps changing the array type on me
+    return newData
 
 
-image = (plt.imread('pics/0008.png')*255).astype(int)
+image = (plt.imread('pics/0016.jpg'))
 print(image.shape)
+_ax = plt.subplot(1, 2, 1)
+_ax.set_axis_off()
+_ax.set_title('Original')
 plt.imshow(image)
-plt.show()
-test = image[0:20, 0:20]  # np.array([1, 1, 3, 3, 3, 2, 8])
-plt.imshow(test)
-plt.show()
 
-print(test, get_size(test))
-print(encodeRLE(test), get_size(encodeRLE(test)))
+print('Original size:     ', get_size(image))
+compressed = encodeRLE(image)
+print('Compressed size:   ', get_size(compressed))
+decompressed = decodeRLE(compressed)
+print('Decompressed size: ', get_size(decompressed))
 
+_ax = plt.subplot(1, 2, 2)
+_ax.set_axis_off()
+_ax.set_title('After compression/decompression cycle')
+plt.imshow(decompressed)
+plt.show()
 
