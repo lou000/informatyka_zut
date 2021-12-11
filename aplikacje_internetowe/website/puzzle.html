@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title><< PUZZLE >></title>
+    <link rel="stylesheet" href="puzzle.css"/>
+    <link rel="stylesheet" href="leaflet-1.7.1/leaflet.css"/>
+    <script src="leaflet-1.7.1/leaflet.js"></script>
+    <script src="leaflet-1.7.1/leaflet-image.js"></script>
+    <script defer src="puzzle.js"></script>
+
+</head>
+
+<body>
+<div id="container">
+
+    <div id="top">
+        <div id="map"></div>
+        <div id="puzzle"></div>
+    </div>
+    
+    <div id="bottom">
+        <div id='buttons'>
+            <button id="generate" class='button' onclick="generatePieces()">Generate</button>
+            <button id="getLocation" class='button' onclick="getLocation()">GetLocation</button>
+            <div>
+            <strong>Latitude:</strong> <span id="latitude"></span><br>
+            <strong>Longitude:</strong> <span id="longitude"></span><br>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
