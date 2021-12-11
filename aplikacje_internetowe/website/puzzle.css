@@ -1,0 +1,76 @@
+html,
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0px;
+}
+
+#map {
+    flex: 50%;
+    height: 100%;
+}
+
+#puzzle {
+    flex: 50%;
+    height: 100%;
+    background-color: rgb(211, 218, 226);
+}
+
+#container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+}
+
+#top {
+    display: flex;
+    flex-direction: row;
+    flex: 70%;
+    float: left;
+}
+
+#bottom {
+    display: flex;
+    flex-direction: row;
+    flex: 30%;
+    float: left;
+    position: relative;
+    background-color: rgb(181, 187, 194);
+}
+
+#puzzlePiece {
+    position: absolute;
+    border-color: black;
+    background-color: red;
+}
+
+#buttons {
+    display: flex;
+    flex-direction: row;
+    top: 10%;
+    left: 0;
+    width: 20%;
+    position: absolute;
+    z-index: 9;
+}
+
+.button {
+    color: rgb(255, 255, 255);
+    padding: 2px;
+    display: flex;
+    background: #3069aa;
+    border-radius: 10px;
+    float: left;
+    margin: 5%;
+    width: 80px;
+    height: 30px;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
