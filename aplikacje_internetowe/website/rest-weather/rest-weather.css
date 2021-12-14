@@ -1,0 +1,127 @@
+body {
+    font-family: sans-serif;
+    background: -webkit-linear-gradient(to right, #0f0c29, #302b63, #24243e);
+    background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
+    color: white;
+}
+
+#weather-search-params {
+    width: 350px;
+    margin: 15px auto;
+    text-align: center;
+}
+
+#wrapper {
+    width: 800px;
+    margin: auto;
+}
+
+h1 {
+    background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+    font-size: 60px;
+    animation: animatedgradient 3s ease alternate infinite;
+}
+
+#weather-results-container {
+    width: 800px;
+    height: 600px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    overflow-y: scroll;
+    margin: 15px auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    text-align: center;
+}
+
+#weather-results-container::-webkit-scrollbar {
+    display: none;
+    /* for Chrome, Safari, and Opera */
+}
+
+.weather-block {
+    float: left;
+    display: block;
+    width: 350px;
+    height: 120px;
+    margin: 10px auto;
+    text-align: left;
+}
+
+.weather-date {
+    font-weight: bold;
+    width: 350px;
+    text-align: left;
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    font-size: 20px;
+}
+
+.weather-icon {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    width: 100px;
+    height: 100px;
+}
+
+.weather-temperature {
+    position: absolute;
+    top: 30px;
+    left: 110px;
+    font-size: 33px;
+    font-weight: bold;
+}
+
+.weather-temperature-feels-like {
+    position: absolute;
+    top: 70px;
+    left: 110px;
+}
+
+.weather-description {
+    position: absolute;
+    top: 90px;
+    left: 110px;
+}
+
+.gradient-border {
+    --borderWidth: 5px;
+    background: #1D1F20;
+    position: relative;
+    border-radius: var(--borderWidth);
+}
+
+.gradient-border:after {
+    content: '';
+    position: absolute;
+    top: calc(-1 * var(--borderWidth));
+    left: calc(-1 * var(--borderWidth));
+    height: calc(100% + var(--borderWidth) * 2);
+    width: calc(100% + var(--borderWidth) * 2);
+    background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
+    border-radius: calc(2 * var(--borderWidth));
+    z-index: -1;
+    animation: animatedgradient 3s ease alternate infinite;
+    background-size: 300% 300%;
+}
+
+
+@keyframes animatedgradient {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}

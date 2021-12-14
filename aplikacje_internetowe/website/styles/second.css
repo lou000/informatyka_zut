@@ -1,8 +1,9 @@
-
 * {
   box-sizing: border-box;
 }
-body, html {
+
+body,
+html {
   margin: 10px;
   background-color: #FFDBC5;
 }
@@ -17,9 +18,33 @@ body, html {
   float: left;
   padding: 30px;
 }
+
 img {
-    max-width: 100%;
-    max-height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.theme-button {
+  width: 100px;
+  height: 30px;
+  margin-bottom: 5px;
+  background-color: #ff8c6a;
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+.theme-button:hover {
+  background-color: #fd7045;
+}
+
+
+.theme-buttons {
+  position: fixed;
+  top: 0;
+  left: 90%;
+  width: 10%;
+  z-index: 1000;
 }
 
 html {
@@ -27,34 +52,35 @@ html {
 }
 
 h1 {
-    color: white;
-    font-family: 'Georgia', sans-serif;
-    font-size: 100px;
-    font-weight: bold;
-    line-height: 1;
-    text-align: center;
+  color: white;
+  font-family: 'Georgia', sans-serif;
+  font-size: 100px;
+  font-weight: bold;
+  line-height: 1;
+  text-align: center;
 }
 
 h2 {
-    color: #530031;
-    font-family: "Georgia", sans-serif;
-    font-size: 30px;
-    font-weight: 300;
-    line-height: 32px;
-    margin: 0 0 72px;
-    text-align: center;
+  color: #530031;
+  font-family: "Georgia", sans-serif;
+  font-size: 30px;
+  font-weight: 300;
+  line-height: 32px;
+  margin: 0 0 72px;
+  text-align: center;
 }
 
-h3 { color: #2C112C;
-    font-family: 'Courier New', sans-serif;
-    font-size: 20px;
-    font-weight: bolder;
-    display:inline
+h3 {
+  color: #2C112C;
+  font-family: 'Courier New', sans-serif;
+  font-size: 20px;
+  font-weight: bolder;
+  display: inline
 }
 
 .header-image {
   height: 600px;
-  background-image:  url("forest.jpg");
+  background-image: url("forest.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -89,7 +115,7 @@ h3 { color: #2C112C;
   margin-bottom: 7px;
   background-color: #ff8c6a;
   color: #ffffff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 
 .menu li:hover {
@@ -102,7 +128,7 @@ h3 { color: #2C112C;
   color: #ffffff;
   text-align: center;
   font-size: 14px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 
 .footer {
@@ -119,7 +145,13 @@ h3 { color: #2C112C;
 }
 
 @media only screen and (min-width: 768px) {
+
   /* For desktop: */
-  .col-1 {width: 25%;}
-  .col-2 {width: 50%;}
+  .col-1 {
+    width: 25%;
+  }
+
+  .col-2 {
+    width: 50%;
+  }
 }
