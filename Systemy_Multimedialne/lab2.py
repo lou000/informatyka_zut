@@ -10,7 +10,7 @@ import soundfile as sf
 def quantize(_data, _bits):
     assert 2 <= _bits <= 32
 
-    out_val = data.astype(np.float32)
+    out_val = _data.astype(np.float32)
     _start = 0
     _end = 0
 
@@ -78,10 +78,10 @@ if len(data.shape) > 1:
     data = data[:, 0]
 
 ms = 100
-# plot_sound(quantize(data, 4),  freq, ms, "Quantization 4 bit")
-# plot_sound(quantize(data, 8),  freq, ms, "Quantization 8 bit")
-# plot_sound(quantize(data, 16), freq, ms, "Quantization 16 bit")
-# plot_sound(quantize(data, 24), freq, ms, "Quantization 24 bit")
+plot_sound(quantize(data, 4),  freq, ms, "Quantization 4 bit")
+plot_sound(quantize(data, 8),  freq, ms, "Quantization 8 bit")
+plot_sound(quantize(data, 16), freq, ms, "Quantization 16 bit")
+plot_sound(quantize(data, 24), freq, ms, "Quantization 24 bit")
 
 # plot_sound(decimate(data, int(freq / 2000)), 2000, 1000)
 # plot_freq_change(data, freq, 2000 , ms)
@@ -93,19 +93,19 @@ ms = 100
 # plot_freq_change(data, freq, 16950, ms)
 
 
-sd.play(data, samplerate=freq, blocking=True)
-sd.play(quantize(data, 4), samplerate=freq, blocking=True)
-sd.play(quantize(data, 8), samplerate=freq, blocking=True)
-sd.play(quantize(data, 16), samplerate=freq, blocking=True)
-sd.play(quantize(data, 24), samplerate=freq, blocking=True)
-
-frequencies = [2000, 4000, 8000, 16000, 24000, 41000, 16950]
-
-for new_freq in frequencies:
-    sd.play(decimate(data, int(freq/new_freq)), samplerate=new_freq, blocking=True)
-for new_freq in frequencies:
-    sd.play(interp_signal(data, freq, new_freq, "linear"), samplerate=new_freq, blocking=True)
-for new_freq in frequencies:
-    sd.play(interp_signal(data, freq, new_freq, "cubic"), samplerate=new_freq, blocking=True)
+# sd.play(data, samplerate=freq, blocking=True)
+# sd.play(quantize(data, 4), samplerate=freq, blocking=True)
+# sd.play(quantize(data, 8), samplerate=freq, blocking=True)
+# sd.play(quantize(data, 16), samplerate=freq, blocking=True)
+# sd.play(quantize(data, 24), samplerate=freq, blocking=True)
+#
+# frequencies = [2000, 4000, 8000, 16000, 24000, 41000, 16950]
+#
+# for new_freq in frequencies:
+#     sd.play(decimate(data, int(freq/new_freq)), samplerate=new_freq, blocking=True)
+# for new_freq in frequencies:
+#     sd.play(interp_signal(data, freq, new_freq, "linear"), samplerate=new_freq, blocking=True)
+# for new_freq in frequencies:
+#     sd.play(interp_signal(data, freq, new_freq, "cubic"), samplerate=new_freq, blocking=True)
 
 
