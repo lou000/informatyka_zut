@@ -25,10 +25,11 @@ def quantize(_data, _bits):
     out_val = (out_val-_start)/(_end-_start)
     out_val = np.round(out_val*_range2)/_range2
     out_val = ((out_val*(_end-_start))+_start)
+
     return out_val.astype(_data.dtype)
 
 
-def quantizeMinMax(_data, _bits, _min, _max):
+def quantize2(_data, _bits, _min, _max):
     out_val = _data.astype(np.float32)
     _range = 2 ** _bits - 1
 
@@ -74,8 +75,7 @@ def encode_DPCM(_data, bits):
     E = out_val[0]
     for x in range(1, _data.shape[0]):
         diff = _data[x] - E
-        # nie moge skwantyzowac tych danych na całej przestrzeni floata albo inta bo wyjdą prawie same zera
-        diff = quantizeMinMax(diff, bits, _data.min(), _data.max())
+        diff = quantize2(diff, bits, _data.min(), _data.max())
         out_val[x] = diff
         E += diff
     return out_val
@@ -95,17 +95,20 @@ def cycle_DPCM(_data, bits):
 
 
 rcParams['figure.figsize'] = 10, 10
-data, freq = sf.read('sounds/sing_low1.wav', dtype=np.float32)
+data, freq = sf.read('sounds/sing_high1.wav', dtype=np.float32)
 
 print(freq, data.shape, np.unique(data).size)
 if len(data.shape) > 1:
     data = data[:, 0]
 
-data1 = cycle_mu_law(data, 255, 8)
-data2 = cycle_DPCM(data, 8)
+bit = 2
+_time_ms = 2000
+_max = int(freq*(_time_ms/1000))
+data2 = cycle_DPCM(data[0:_max], bit)
+data1 = cycle_mu_law(data[0:_max], 255, bit)
 
-plot_sound_diff(data, data1, data2, freq, 10, "Kompresja stratna")
+# plot_sound_diff(data, data1, data2, freq, 5, "Kompresja stratna")
 
-sd.play(data, samplerate=freq, blocking=True)
+sd.play(data[0:_max], samplerate=freq, blocking=True)
 sd.play(data1, samplerate=freq, blocking=True)
 sd.play(data2, samplerate=freq, blocking=True)
